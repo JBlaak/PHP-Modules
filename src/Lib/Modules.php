@@ -1,8 +1,9 @@
 <?php
 
-namespace PhpModules;
+namespace PhpModules\Lib;
 
-use PhpModules\Internal\DefinitionsGatherer;
+use PhpModules\Lib\Internal\DefinitionsGatherer;
+use PhpModules\Lib\Internal\NamespaceName;
 
 class Modules
 {

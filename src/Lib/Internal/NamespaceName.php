@@ -1,6 +1,6 @@
 <?php
 
-namespace PhpModules;
+namespace PhpModules\Lib\Internal;
 
 class NamespaceName
 {

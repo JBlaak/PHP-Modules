@@ -1,7 +1,9 @@
 <?php
 
 
-use PhpModules\NamespaceName;
+namespace Lib;
+
+use PhpModules\Lib\Internal\NamespaceName;
 use PHPUnit\Framework\TestCase;
 
 class NamespaceNameTest extends TestCase
