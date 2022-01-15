@@ -15,7 +15,6 @@ class Modules
     {
     }
 
-
     /**
      * @param string $path
      * @param Module[] $modules

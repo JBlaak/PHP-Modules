@@ -7,7 +7,7 @@ use PHPUnit\Framework\TestCase;
 class NamespaceNameTest extends TestCase
 {
 
-    public function test_isParentOf_shouldReturnTrueWhenEqual()
+    public function test_isParentOf_shouldReturnTrueWhenEqual(): void
     {
         /* Given */
         $namespaceName = new NamespaceName('A');
@@ -20,7 +20,7 @@ class NamespaceNameTest extends TestCase
         $this->assertTrue($result);
     }
 
-    public function test_isParentOf_shouldReturnFalseWhenNotEqual()
+    public function test_isParentOf_shouldReturnFalseWhenNotEqual(): void
     {
         /* Given */
         $namespaceName = new NamespaceName('A');
@@ -33,7 +33,7 @@ class NamespaceNameTest extends TestCase
         $this->assertFalse($result);
     }
 
-    public function test_isParentOf_shouldReturnTrueWhenChild()
+    public function test_isParentOf_shouldReturnTrueWhenChild(): void
     {
         /* Given */
         $namespaceName = new NamespaceName('A');
@@ -46,7 +46,7 @@ class NamespaceNameTest extends TestCase
         $this->assertTrue($result);
     }
 
-    public function test_isParentOf_shouldReturnFalseWhenParent()
+    public function test_isParentOf_shouldReturnFalseWhenParent(): void
     {
         /* Given */
         $namespaceName = new NamespaceName('A\B');

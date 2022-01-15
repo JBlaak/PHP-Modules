@@ -5,7 +5,7 @@ namespace Sample\ModuleA;
 class ClassA
 {
 
-    public function run()
+    public function run(): void
     {
         echo "Hi!";
     }
