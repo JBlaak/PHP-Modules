@@ -1,0 +1,20 @@
+<?php
+
+namespace PhpModules\Cli\Internal;
+
+use PhpModules\Lib\Modules;
+
+class ModulesResolver
+{
+
+    public function get(): Modules
+    {
+        $modules = require './modules.php';
+        if (!$modules instanceof Modules) {
+            echo 'Your configuration file should return an instance of ' . Modules::class;
+            die(1);
+        }
+        return $modules;
+    }
+
+}

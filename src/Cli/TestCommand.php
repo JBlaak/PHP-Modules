@@ -2,24 +2,26 @@
 
 namespace PhpModules\Cli;
 
-use PhpModules\Lib\Modules;
+use PhpModules\Cli\Internal\ModulesResolver;
+use PhpModules\Lib\Analyzer;
 
 class TestCommand
 {
 
+
+    public function __construct(private ModulesResolver $modulesResolver)
+    {
+    }
+
     public static function create(): TestCommand
     {
-        return new TestCommand();
+        return new TestCommand(new ModulesResolver());
     }
 
     public function run(): void
     {
-        $modules = require './modules.php';
-        if (!$modules instanceof Modules) {
-            echo 'Your configuration file should return an instance of ' . Modules::class;
-            die(1);
-        }
-        $result = $modules->run();
+        $modules = $this->modulesResolver->get();
+        $result = Analyzer::create($modules)->analyze();
         foreach ($result->errors as $error) {
             echo $error->file->getBasename() . ' is not allowed to import from ' . $error->dependency . PHP_EOL;
         }

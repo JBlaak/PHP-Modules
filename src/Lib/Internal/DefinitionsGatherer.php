@@ -7,17 +7,20 @@ use PhpParser\ParserFactory;
 
 class DefinitionsGatherer
 {
+    public function __construct(private string $path)
+    {
+    }
+
 
     /**
-     * @param string $path
      * @return Definition[]
      */
-    public function gather(string $path): array
+    public function gather(): array
     {
         $parser = (new ParserFactory)->create(ParserFactory::PREFER_PHP7);
         $traverser = new NodeTraverser;
 
-        $recursiveIteratorIterator = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($path));
+        $recursiveIteratorIterator = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($this->path));
         $regexIterator = new \RegexIterator($recursiveIteratorIterator, '/\.php$/');
 
         $definitions = [];
