@@ -2,11 +2,12 @@
 
 namespace Lib;
 
+use PhpModules\Lib\Analyzer;
 use PhpModules\Lib\Module;
 use PhpModules\Lib\Modules;
 use PHPUnit\Framework\TestCase;
 
-class ModulesTest extends TestCase
+class AnalyzerTest extends TestCase
 {
     const SAMPLE_DIR = __DIR__ . '/../Sample';
 
@@ -18,9 +19,10 @@ class ModulesTest extends TestCase
         /* Given */
         $sampleA = Module::create(self::NAMESPACE_MODULEA);
         $sampleB = Module::create(self::NAMESPACE_MODULEB, [$sampleA]);
+        $modules = Modules::create(self::SAMPLE_DIR, [$sampleA, $sampleB]);
 
         /* When */
-        $result = Modules::create(self::SAMPLE_DIR, [$sampleA, $sampleB])->run();
+        $result = Analyzer::create($modules)->analyze();
 
         /* Then */
         $this->assertCount(0, $result->errors);
@@ -31,9 +33,10 @@ class ModulesTest extends TestCase
         /* Given */
         $sampleA = Module::create(self::NAMESPACE_MODULEA);
         $sampleB = Module::create(self::NAMESPACE_MODULEB);
+        $modules = Modules::create(self::SAMPLE_DIR, [$sampleA, $sampleB]);
 
         /* When */
-        $result = Modules::create(self::SAMPLE_DIR, [$sampleA, $sampleB])->run();
+        $result = Analyzer::create($modules)->analyze();
 
         /* Then */
         $this->assertCount(1, $result->errors);
@@ -46,9 +49,10 @@ class ModulesTest extends TestCase
         /* Given */
         $sampleB = Module::create(self::NAMESPACE_MODULEB);
         $sampleA = Module::create(self::NAMESPACE_MODULEA, [$sampleB]);
+        $modules = Modules::create(self::SAMPLE_DIR, [$sampleA, $sampleB]);
 
         /* When */
-        $result = Modules::create(self::SAMPLE_DIR, [$sampleA, $sampleB])->run();
+        $result = Analyzer::create($modules)->analyze();
 
         /* Then */
         $this->assertCount(1, $result->errors);

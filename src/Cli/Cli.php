@@ -28,6 +28,9 @@ class Cli
             case 'test':
                 TestCommand::create()->run();
                 break;
+            case 'graph':
+                GraphCommand::create()->run();
+                break;
             default:
                 die('Unknown command');
         }
