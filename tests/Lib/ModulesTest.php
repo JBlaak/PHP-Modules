@@ -1,11 +1,14 @@
 <?php
 
-use PhpModules\Module;
-use PhpModules\Modules;
+namespace Lib;
+
+use PhpModules\Lib\Module;
+use PhpModules\Lib\Modules;
 use PHPUnit\Framework\TestCase;
 
 class ModulesTest extends TestCase
 {
+    const SAMPLE_DIR = __DIR__ . '/../Sample';
 
     const NAMESPACE_MODULEA = 'Sample\ModuleA';
     const NAMESPACE_MODULEB = 'Sample\ModuleB';
@@ -13,11 +16,11 @@ class ModulesTest extends TestCase
     public function test_run_definedDependencyShouldBeAllowed(): void
     {
         /* Given */
-        $sampleA = new Module(self::NAMESPACE_MODULEA);
-        $sampleB = new Module(self::NAMESPACE_MODULEB, [$sampleA]);
+        $sampleA = Module::create(self::NAMESPACE_MODULEA);
+        $sampleB = Module::create(self::NAMESPACE_MODULEB, [$sampleA]);
 
         /* When */
-        $result = Modules::create(__DIR__ . '/Sample', [$sampleA, $sampleB])->run();
+        $result = Modules::create(self::SAMPLE_DIR, [$sampleA, $sampleB])->run();
 
         /* Then */
         $this->assertCount(0, $result->errors);
@@ -26,11 +29,11 @@ class ModulesTest extends TestCase
     public function test_run_undefinedDependencyShouldGiveAnError(): void
     {
         /* Given */
-        $sampleA = new Module(self::NAMESPACE_MODULEA);
-        $sampleB = new Module(self::NAMESPACE_MODULEB);
+        $sampleA = Module::create(self::NAMESPACE_MODULEA);
+        $sampleB = Module::create(self::NAMESPACE_MODULEB);
 
         /* When */
-        $result = Modules::create(__DIR__ . '/Sample', [$sampleA, $sampleB])->run();
+        $result = Modules::create(self::SAMPLE_DIR, [$sampleA, $sampleB])->run();
 
         /* Then */
         $this->assertCount(1, $result->errors);
@@ -41,11 +44,11 @@ class ModulesTest extends TestCase
     public function test_run_reverseDependencyShouldGiveAnError(): void
     {
         /* Given */
-        $sampleB = new Module(self::NAMESPACE_MODULEB);
-        $sampleA = new Module(self::NAMESPACE_MODULEA, [$sampleB]);
+        $sampleB = Module::create(self::NAMESPACE_MODULEB);
+        $sampleA = Module::create(self::NAMESPACE_MODULEA, [$sampleB]);
 
         /* When */
-        $result = Modules::create(__DIR__ . '/Sample', [$sampleA, $sampleB])->run();
+        $result = Modules::create(self::SAMPLE_DIR, [$sampleA, $sampleB])->run();
 
         /* Then */
         $this->assertCount(1, $result->errors);

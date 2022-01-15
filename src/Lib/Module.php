@@ -1,6 +1,8 @@
 <?php
 
-namespace PhpModules;
+namespace PhpModules\Lib;
+
+use PhpModules\Lib\Internal\NamespaceName;
 
 class Module
 {
@@ -19,10 +21,20 @@ class Module
      * @param NamespaceName|string $namespace
      * @param Module[] $dependencies
      */
-    public function __construct(NamespaceName|string $namespace, array $dependencies = [])
+    private function __construct(NamespaceName|string $namespace, array $dependencies)
     {
         $this->namespace = is_string($namespace) ? NamespaceName::fromString($namespace) : $namespace;
         $this->dependencies = $dependencies;
+    }
+
+    /**
+     * @param NamespaceName|string $namespace
+     * @param Module[] $dependencies
+     * @return Module
+     */
+    public static function create(NamespaceName|string $namespace, array $dependencies = []): Module
+    {
+        return new Module($namespace, $dependencies);
     }
 
     public function allowsImport(NamespaceName $import): bool

@@ -1,8 +1,6 @@
 <?php
 
-namespace PhpModules\Internal;
-
-use PhpModules\NamespaceName;
+namespace PhpModules\Lib\Internal;
 
 class Definition
 {

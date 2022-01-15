@@ -1,6 +1,6 @@
 <?php
 
-namespace PhpModules\Internal;
+namespace PhpModules\Lib\Internal;
 
 use PhpParser\Node;
 use PhpParser\NodeVisitorAbstract;

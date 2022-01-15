@@ -53,3 +53,6 @@ jobs:
 
       - name: Execute tests via PHPUnit
         run: ./vendor/bin/phpunit --stop-on-failure --stop-on-error
+
+      - name: Run own modules check
+        run: ./modules test

@@ -1,8 +1,7 @@
 <?php
 
-namespace PhpModules\Internal;
+namespace PhpModules\Lib\Internal;
 
-use PhpModules\NamespaceName;
 use PhpParser\NodeTraverser;
 use PhpParser\ParserFactory;
 

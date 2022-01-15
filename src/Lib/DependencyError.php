@@ -1,6 +1,8 @@
 <?php
 
-namespace PhpModules;
+namespace PhpModules\Lib;
+
+use PhpModules\Lib\Internal\NamespaceName;
 
 class DependencyError
 {
