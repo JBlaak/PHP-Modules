@@ -29,7 +29,13 @@ class DefinitionsGatherer
             $traverser->addVisitor($importsCollector);
 
             $code = file_get_contents($file->getPathName());
+            if ($code === false) {
+                continue;
+            }
             $stmts = $parser->parse($code);
+            if ($stmts === null) {
+                continue;
+            }
             $traverser->traverse($stmts);
 
             /** @var NamespaceName[] $imports */
@@ -38,7 +44,7 @@ class DefinitionsGatherer
                 $imports[] = NamespaceName::fromArray($import->name->parts);
             }
 
-            $parts = $importsCollector->namespace?->name->parts;
+            $parts = $importsCollector->namespace?->name?->parts;
             if ($parts !== null) {
                 $definitions[] = new Definition(
                     $file,

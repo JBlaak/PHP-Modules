@@ -7,7 +7,7 @@ use Sample\ModuleA\ClassA;
 class ClassB
 {
 
-    public function run()
+    public function run(): void
     {
         $classA = new ClassA();
         $classA->run();

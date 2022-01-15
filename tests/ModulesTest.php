@@ -10,7 +10,7 @@ class ModulesTest extends TestCase
     const NAMESPACE_MODULEA = 'Sample\ModuleA';
     const NAMESPACE_MODULEB = 'Sample\ModuleB';
 
-    public function test_run_definedDependencyShouldBeAllowed()
+    public function test_run_definedDependencyShouldBeAllowed(): void
     {
         /* Given */
         $sampleA = new Module(self::NAMESPACE_MODULEA);
@@ -23,7 +23,7 @@ class ModulesTest extends TestCase
         $this->assertCount(0, $result->errors);
     }
 
-    public function test_run_undefinedDependencyShouldGiveAnError()
+    public function test_run_undefinedDependencyShouldGiveAnError(): void
     {
         /* Given */
         $sampleA = new Module(self::NAMESPACE_MODULEA);
@@ -38,7 +38,7 @@ class ModulesTest extends TestCase
         $this->assertEquals('Sample\ModuleA\ClassA', (string)$result->errors[0]->dependency);
     }
 
-    public function test_run_reverseDependencyShouldGiveAnError()
+    public function test_run_reverseDependencyShouldGiveAnError(): void
     {
         /* Given */
         $sampleB = new Module(self::NAMESPACE_MODULEB);

@@ -30,10 +30,10 @@ class Module
         return $this->namespace->isParentOf($import) || $this->isDependency($import);
     }
 
-    private function isDependency(NamespaceName $import)
+    private function isDependency(NamespaceName $import): bool
     {
         foreach ($this->dependencies as $dependency) {
-            if($dependency->namespace->isParentOf($import)) {
+            if ($dependency->namespace->isParentOf($import)) {
                 return true;
             }
         }

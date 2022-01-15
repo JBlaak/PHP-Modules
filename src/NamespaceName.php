@@ -10,22 +10,33 @@ class NamespaceName
      */
     public array $parts;
 
+    /**
+     * @param string[]|string $name
+     */
     public function __construct(array|string $name)
     {
         $this->parts = is_string($name) ? explode('\\', $name) : $name;
     }
 
-    public static function fromString(string $namespace)
+    /**
+     * @param string $namespace
+     * @return NamespaceName
+     */
+    public static function fromString(string $namespace): NamespaceName
     {
         return new NamespaceName($namespace);
     }
 
-    public static function fromArray(array $parts)
+    /**
+     * @param string[] $parts
+     * @return NamespaceName
+     */
+    public static function fromArray(array $parts): NamespaceName
     {
         return new NamespaceName($parts);
     }
 
-    public function isParentOf(NamespaceName $namespace)
+    public function isParentOf(NamespaceName $namespace): bool
     {
         foreach ($this->parts as $key => $part) {
             if (!isset($namespace->parts[$key]) || $namespace->parts[$key] !== $part) {
