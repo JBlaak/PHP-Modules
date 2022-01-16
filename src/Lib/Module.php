@@ -41,12 +41,21 @@ class Module
     /**
      * @param NamespaceName|string $namespace
      * @param Module[] $dependencies
-     * @param bool $strict
      * @return Module
      */
-    public static function create(NamespaceName|string $namespace, array $dependencies = [], bool $strict = false): Module
+    public static function create(NamespaceName|string $namespace, array $dependencies = []): Module
     {
-        return new Module($namespace, $dependencies, $strict);
+        return new Module($namespace, $dependencies, false);
+    }
+
+    /**
+     * @param NamespaceName|string $namespace
+     * @param Module[] $dependencies
+     * @return Module
+     */
+    public static function strict(NamespaceName|string $namespace, array $dependencies = []): Module
+    {
+        return new Module($namespace, $dependencies, true);
     }
 
     public function allowsImport(Importable $import): bool
