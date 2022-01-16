@@ -43,7 +43,7 @@ class ExternalDependencyAnalyzerTest extends TestCase
         /* Then */
         $this->assertCount(1, $result->errors);
         $this->assertEquals('ClassA.php', $result->errors[0]->file->getBasename());
-        $this->assertEquals('Graphp\GraphViz\GraphViz', (string)$result->errors[0]->dependency);
+        $this->assertEquals('Graphp\GraphViz\GraphViz', (string)$result->errors[0]->import);
     }
 
     public function test_run_allowUndefinedModules_shouldAllowImportsFromOutsideOfDefinedModules(): void
@@ -77,7 +77,7 @@ class ExternalDependencyAnalyzerTest extends TestCase
         /* Then */
         $this->assertCount(1, $result->errors);
         $this->assertEquals('ClassB.php', $result->errors[0]->file->getBasename());
-        $this->assertEquals('Sample\ModuleA\ClassA', (string)$result->errors[0]->dependency);
+        $this->assertEquals('Sample\ModuleA\ClassA', (string)$result->errors[0]->import);
     }
 }
 

@@ -2,6 +2,11 @@
 
 namespace PhpModules\Lib\Internal;
 
+use PhpModules\Lib\Domain\ClassDefinition;
+use PhpModules\Lib\Domain\ClassName;
+use PhpModules\Lib\Domain\FileDefinition;
+use PhpModules\Lib\Domain\Importable;
+use PhpModules\Lib\Domain\NamespaceName;
 use PhpModules\Lib\Modules;
 use PhpParser\NodeTraverser;
 use PhpParser\ParserFactory;
@@ -13,7 +18,7 @@ class DefinitionsGatherer
     }
 
     /**
-     * @return Definition[]
+     * @return FileDefinition[]
      */
     public function gather(): array
     {
@@ -27,8 +32,8 @@ class DefinitionsGatherer
 
         /** @var \SplFileInfo $file */
         foreach ($regexIterator as $file) {
-            $importsCollector = new ImportsCollector();
-            $traverser->addVisitor($importsCollector);
+            $definitionCollector = new DefinitionCollector();
+            $traverser->addVisitor($definitionCollector);
 
             $code = file_get_contents($file->getPathName());
             if ($code === false) {
@@ -40,42 +45,44 @@ class DefinitionsGatherer
             }
             $traverser->traverse($stmts);
 
-            /** @var NamespaceName[] $imports */
-            $imports = [];
-            foreach ($importsCollector->imports as $import) {
-                $imports[] = NamespaceName::fromArray($import->name->parts);
-            }
+            $nameSpaceParts = $definitionCollector->namespace?->name?->parts;
+            if ($nameSpaceParts !== null) {
+                $namespace = NamespaceName::fromArray($nameSpaceParts);
 
-            $parts = $importsCollector->namespace?->name?->parts;
-            if ($parts !== null) {
-                $namespace = NamespaceName::fromArray($parts);
-                if ($this->isInModule($namespace)) {
-                    $definitions[] = new Definition(
-                        $file,
-                        $namespace,
-                        $imports
-                    );
+                /** @var Importable[] $imports */
+                $imports = [];
+                foreach ($definitionCollector->imports as $import) {
+                    $imports[] = Importable::fromArray($import->name->parts);
                 }
+
+                /** @var ClassDefinition[] $classDefinitions */
+                $classDefinitions = [];
+                foreach ($definitionCollector->classes as $classStmt) {
+                    if ($classStmt->name !== null) {
+                        $classDefinition = new ClassDefinition(
+                            ClassName::fromNamespaceAndClassName($namespace, $classStmt->name),
+                            $classStmt->getDocComment()?->getText()
+                        );
+                        $classDefinitions[] = $classDefinition;
+                    }
+                }
+
+                if (count($classDefinitions) === 0) {
+                    continue;
+                }
+
+                $definitions[] = new FileDefinition(
+                    $file,
+                    $namespace,
+                    $classDefinitions,
+                    $imports
+                );
             }
 
-            $traverser->removeVisitor($importsCollector);
+            $traverser->removeVisitor($definitionCollector);
         }
 
         return $definitions;
-    }
-
-    /**
-     * @param NamespaceName $import
-     * @return bool
-     */
-    private function isInModule(NamespaceName $import): bool
-    {
-        foreach ($this->modules->modules as $module) {
-            if ($module->namespace->isParentOf($import)) {
-                return true;
-            }
-        }
-        return false;
     }
 
 }

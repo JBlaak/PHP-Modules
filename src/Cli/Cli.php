@@ -2,9 +2,11 @@
 
 namespace PhpModules\Cli;
 
+/**
+ * @public
+ */
 class Cli
 {
-
 
     /**
      * @param string[] $arguments

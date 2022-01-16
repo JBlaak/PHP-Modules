@@ -5,7 +5,7 @@ namespace PhpModules\Lib\Internal;
 use PhpParser\Node;
 use PhpParser\NodeVisitorAbstract;
 
-class ImportsCollector extends NodeVisitorAbstract
+class DefinitionCollector extends NodeVisitorAbstract
 {
 
     public ?Node\Stmt\Namespace_ $namespace = null;
@@ -14,6 +14,11 @@ class ImportsCollector extends NodeVisitorAbstract
      * @var Node\Stmt\UseUse[]
      */
     public array $imports = [];
+
+    /**
+     * @var Node\Stmt\Class_[]
+     */
+    public array $classes = [];
 
     public function leaveNode(Node $node)
     {
@@ -24,6 +29,9 @@ class ImportsCollector extends NodeVisitorAbstract
             foreach ($node->uses as $use) {
                 $this->imports[] = $use;
             }
+        }
+        if ($node instanceof Node\Stmt\Class_) {
+            $this->classes[] = $node;
         }
         return $node;
     }

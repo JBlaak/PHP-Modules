@@ -41,7 +41,7 @@ class BasicAnalyzerTest extends TestCase
         /* Then */
         $this->assertCount(1, $result->errors);
         $this->assertEquals('ClassB.php', $result->errors[0]->file->getBasename());
-        $this->assertEquals('Sample\ModuleA\ClassA', (string)$result->errors[0]->dependency);
+        $this->assertEquals('Sample\ModuleA\ClassA', (string)$result->errors[0]->import);
     }
 
     public function test_run_reverseDependencyShouldGiveAnError(): void
@@ -57,7 +57,7 @@ class BasicAnalyzerTest extends TestCase
         /* Then */
         $this->assertCount(1, $result->errors);
         $this->assertEquals('ClassB.php', $result->errors[0]->file->getBasename());
-        $this->assertEquals('Sample\ModuleA\ClassA', (string)$result->errors[0]->dependency);
+        $this->assertEquals('Sample\ModuleA\ClassA', (string)$result->errors[0]->import);
     }
 
 }

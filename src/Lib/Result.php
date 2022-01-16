@@ -2,6 +2,9 @@
 
 namespace PhpModules\Lib;
 
+/**
+ * @public
+ */
 class Result
 {
 
