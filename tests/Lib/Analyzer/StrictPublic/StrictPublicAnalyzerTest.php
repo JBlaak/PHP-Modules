@@ -32,8 +32,8 @@ class StrictPublicAnalyzerTest extends TestCase
     public function test_run_strictModule_cantImportNonPublicClass(): void
     {
         /* Given */
-        $sampleA = Module::create(self::NAMESPACE_MODULEA, [], true);
-        $sampleB = Module::create(self::NAMESPACE_MODULEB, [$sampleA]);
+        $sampleA = Module::strict(self::NAMESPACE_MODULEA, []);
+        $sampleB = Module::strict(self::NAMESPACE_MODULEB, [$sampleA]);
         $modules = Modules::create(self::SAMPLE_DIR, [$sampleA, $sampleB]);
 
         /* When */

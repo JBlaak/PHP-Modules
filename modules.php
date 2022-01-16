@@ -5,7 +5,6 @@
 
 /* Dependencies */
 
-use PhpModules\Lib\Config;
 use PhpModules\Lib\Module;
 use PhpModules\Lib\Modules;
 
@@ -17,9 +16,9 @@ $graphviz = Module::create('Graphp\GraphViz');
 $dependencies = [$phpparser, $phpdocparser, $graph, $graphviz];
 
 /* Internal modules */
-$docreader = Module::create('PhpModules\DocReader', [$phpdocparser], true);
-$lib = Module::create('PhpModules\Lib', [$phpparser, $docreader], true);
-$cli = Module::create('PhpModules\Cli', [$lib, $graph, $graphviz], true);
+$docreader = Module::strict('PhpModules\DocReader', [$phpdocparser]);
+$lib = Module::strict('PhpModules\Lib', [$phpparser, $docreader]);
+$cli = Module::strict('PhpModules\Cli', [$lib, $graph, $graphviz]);
 
 $internal = [$docreader, $lib, $cli];
 
