@@ -1,7 +1,10 @@
 <?php
 
-namespace PhpModules\Lib\Internal;
+namespace PhpModules\Lib\Domain;
 
+/**
+ * A name of a namespace
+ */
 class NamespaceName
 {
 
@@ -36,7 +39,7 @@ class NamespaceName
         return new NamespaceName($parts);
     }
 
-    public function isParentOf(NamespaceName $namespace): bool
+    public function isParentOf(NamespaceName|Importable|ClassName $namespace): bool
     {
         foreach ($this->parts as $key => $part) {
             if (!isset($namespace->parts[$key]) || $namespace->parts[$key] !== $part) {

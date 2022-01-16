@@ -10,16 +10,18 @@ use PhpModules\Lib\Module;
 use PhpModules\Lib\Modules;
 
 $phpparser = Module::create('PhpParser');
+$phpdocparser = Module::create('PHPStan\PhpDocParser');
 $graph = Module::create('Fhaculty\Graph');
 $graphviz = Module::create('Graphp\GraphViz');
 
-$dependencies = [$phpparser, $graph, $graphviz];
+$dependencies = [$phpparser, $phpdocparser, $graph, $graphviz];
 
 /* Internal modules */
-$lib = Module::create('PhpModules\Lib', [$phpparser]);
-$cli = Module::create('PhpModules\Cli', [$lib, $graph, $graphviz]);
+$docreader = Module::create('PhpModules\DocReader', [$phpdocparser], true);
+$lib = Module::create('PhpModules\Lib', [$phpparser, $docreader], true);
+$cli = Module::create('PhpModules\Cli', [$lib, $graph, $graphviz], true);
 
-$internal = [$lib, $cli];
+$internal = [$docreader, $lib, $cli];
 
 return Modules::builder('./src')
     ->register($dependencies)

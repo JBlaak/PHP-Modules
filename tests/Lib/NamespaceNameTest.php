@@ -3,7 +3,7 @@
 
 namespace Lib;
 
-use PhpModules\Lib\Internal\NamespaceName;
+use PhpModules\Lib\Domain\NamespaceName;
 use PHPUnit\Framework\TestCase;
 
 class NamespaceNameTest extends TestCase
