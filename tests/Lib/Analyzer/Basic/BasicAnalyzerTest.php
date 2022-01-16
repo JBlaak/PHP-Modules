@@ -1,15 +1,15 @@
 <?php
 
-namespace Lib;
+namespace Lib\Analyzer\Basic;
 
 use PhpModules\Lib\Analyzer;
 use PhpModules\Lib\Module;
 use PhpModules\Lib\Modules;
 use PHPUnit\Framework\TestCase;
 
-class AnalyzerTest extends TestCase
+class BasicAnalyzerTest extends TestCase
 {
-    const SAMPLE_DIR = __DIR__ . '/../Sample';
+    const SAMPLE_DIR = __DIR__ . '/Sample';
 
     const NAMESPACE_MODULEA = 'Sample\ModuleA';
     const NAMESPACE_MODULEB = 'Sample\ModuleB';

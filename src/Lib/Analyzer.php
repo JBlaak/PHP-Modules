@@ -43,9 +43,37 @@ class Analyzer
      */
     private function isAllowed(NamespaceName $namespace, NamespaceName $import): bool
     {
+        if ($this->modules->allowUndefinedModules && !$this->isInModule($import)) {
+            return true;
+        }
+
+        return $this->moduleAllowsImport($namespace, $import);
+    }
+
+    /**
+     * @param NamespaceName $namespace
+     * @param NamespaceName $import
+     * @return bool
+     */
+    private function moduleAllowsImport(NamespaceName $namespace, NamespaceName $import): bool
+    {
         foreach ($this->modules->modules as $module) {
             if ($module->namespace->isParentOf($namespace)) {
                 return $module->allowsImport($import);
+            }
+        }
+        return false;
+    }
+
+    /**
+     * @param NamespaceName $import
+     * @return bool
+     */
+    private function isInModule(NamespaceName $import): bool
+    {
+        foreach ($this->modules->modules as $module) {
+            if ($module->namespace->isParentOf($import)) {
+                return true;
             }
         }
         return false;

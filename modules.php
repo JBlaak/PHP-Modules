@@ -4,16 +4,23 @@
  */
 
 /* Dependencies */
-$phpparser = \PhpModules\Lib\Module::create('PhpParser');
-$graph = \PhpModules\Lib\Module::create('Fhaculty\Graph');
-$graphviz = \PhpModules\Lib\Module::create('Graphp\GraphViz');
+
+use PhpModules\Lib\Config;
+use PhpModules\Lib\Module;
+use PhpModules\Lib\Modules;
+
+$phpparser = Module::create('PhpParser');
+$graph = Module::create('Fhaculty\Graph');
+$graphviz = Module::create('Graphp\GraphViz');
 
 $dependencies = [$phpparser, $graph, $graphviz];
 
 /* Internal modules */
-$lib = \PhpModules\Lib\Module::create('PhpModules\Lib', [$phpparser]);
-$cli = \PhpModules\Lib\Module::create('PhpModules\Cli', [$lib, $graph, $graphviz]);
+$lib = Module::create('PhpModules\Lib', [$phpparser]);
+$cli = Module::create('PhpModules\Cli', [$lib, $graph, $graphviz]);
 
 $internal = [$lib, $cli];
 
-return \PhpModules\Lib\Modules::create('./src', array_merge($dependencies, $internal));
+return Modules::builder('./src')
+    ->register($dependencies)
+    ->register($internal);
