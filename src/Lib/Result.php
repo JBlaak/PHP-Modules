@@ -2,6 +2,8 @@
 
 namespace PhpModules\Lib;
 
+use PhpModules\Lib\Errors\ModuleError;
+
 /**
  * @public
  */
@@ -9,12 +11,12 @@ class Result
 {
 
     /**
-     * @var DependencyError[]
+     * @var ModuleError[]
      */
     public array $errors;
 
     /**
-     * @param DependencyError[] $errors
+     * @param ModuleError[] $errors
      */
     public function __construct(array $errors)
     {

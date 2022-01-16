@@ -23,7 +23,7 @@ class TestCommand
         $modules = $this->modulesResolver->get();
         $result = Analyzer::create($modules)->analyze();
         foreach ($result->errors as $error) {
-            echo $error->file->getBasename() . ' is not allowed to import from ' . $error->import . PHP_EOL;
+            echo $error . PHP_EOL;
         }
         if (count($result->errors) > 0) {
             echo PHP_EOL;

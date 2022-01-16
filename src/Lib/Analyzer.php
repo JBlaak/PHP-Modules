@@ -6,6 +6,10 @@ use PhpModules\DocReader\DocReader;
 use PhpModules\Lib\Domain\FileDefinition;
 use PhpModules\Lib\Domain\Importable;
 use PhpModules\Lib\Domain\NamespaceName;
+use PhpModules\Lib\Errors\MissingDependency;
+use PhpModules\Lib\Errors\ModuleError;
+use PhpModules\Lib\Errors\NotPublicError;
+use PhpModules\Lib\Errors\UndefinedModule;
 use PhpModules\Lib\Internal\DefinitionsGatherer;
 
 /**
@@ -38,14 +42,11 @@ class Analyzer
 
     public function analyze(): Result
     {
-
-        /** @var DependencyError[] $errors */
+        /** @var ModuleError[] $errors */
         $errors = [];
         foreach ($this->definitions as $definition) {
             foreach ($definition->imports as $import) {
-                if (!$this->isAllowed($definition->namespaceName, $import)) {
-                    $errors[] = new DependencyError($definition->file, $import);
-                }
+                $errors = array_merge($errors, $this->getErrors($definition->file, $definition->namespaceName, $import));
             }
         }
 
@@ -53,28 +54,29 @@ class Analyzer
     }
 
     /**
+     * @param \SplFileInfo $file
      * @param NamespaceName $namespace
      * @param Importable $import
-     * @return bool
+     * @return ModuleError[]
      */
-    private function isAllowed(NamespaceName $namespace, Importable $import): bool
+    private function getErrors(\SplFileInfo $file, NamespaceName $namespace, Importable $import): array
     {
-        // Check if namespace is part of some module, if not, just return true
+        // Check if namespace is part of some module, if not, no errors
         $moduleOfNamespace = $this->getModule($namespace);
         if ($moduleOfNamespace === null) {
-            return true;
+            return [];
         }
 
         // See if import is part of a module
-        // if allowed to import undefined modules return true
+        // if allowed to import undefined modules no errors
         $moduleOfImport = $this->getModule($import);
         if ($this->modules->allowUndefinedModules && $moduleOfImport === null) {
-            return true;
+            return [];
         }
 
         // It is always allowed to import from your own module
-        if($moduleOfImport === $moduleOfNamespace) {
-            return true;
+        if ($moduleOfImport === $moduleOfNamespace) {
+            return [];
         }
 
         // If module of import is marked as a strict module the import should be marked as public
@@ -83,10 +85,19 @@ class Analyzer
             && $moduleOfImport->strict
             && !$this->isMarkedAsPublic($import)
         ) {
-            return false;
+            return [new NotPublicError($file, $import, $moduleOfImport)];
         }
 
-        return $moduleOfNamespace->allowsImport($import);
+        foreach ($moduleOfNamespace->dependencies as $dependency) {
+            if ($dependency->namespace->isParentOf($import)) {
+                return [];
+            }
+        }
+
+        if ($moduleOfImport === null) {
+            return [new UndefinedModule($file, $import)];
+        }
+        return [new MissingDependency($file, $import, $moduleOfNamespace, $moduleOfImport)];
     }
 
     private function getModule(NamespaceName|Importable $namespaceName): ?Module
