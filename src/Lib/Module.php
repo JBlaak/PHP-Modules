@@ -51,11 +51,6 @@ class Module
 
     public function allowsImport(Importable $import): bool
     {
-        return $this->namespace->isParentOf($import) || $this->isDependency($import);
-    }
-
-    private function isDependency(Importable $import): bool
-    {
         foreach ($this->dependencies as $dependency) {
             if ($dependency->namespace->isParentOf($import)) {
                 return true;

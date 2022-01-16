@@ -3,6 +3,8 @@
 namespace Lib\Analyzer\ExternalDependency;
 
 use PhpModules\Lib\Analyzer;
+use PhpModules\Lib\Errors\MissingDependency;
+use PhpModules\Lib\Errors\UndefinedModule;
 use PhpModules\Lib\Module;
 use PhpModules\Lib\Modules;
 use PHPUnit\Framework\TestCase;
@@ -42,6 +44,23 @@ class ExternalDependencyAnalyzerTest extends TestCase
 
         /* Then */
         $this->assertCount(1, $result->errors);
+        $this->assertInstanceOf(MissingDependency::class, $result->errors[0]);
+        $this->assertEquals('ClassA.php', $result->errors[0]->file->getBasename());
+        $this->assertEquals('Graphp\GraphViz\GraphViz', (string)$result->errors[0]->import);
+    }
+
+    public function test_run_undefinedModuleShouldGiveProperError(): void
+    {
+        /* Given */
+        $sampleA = Module::create(self::NAMESPACE_MODULEA);
+        $modules = Modules::builder(self::SAMPLE_DIR)->register($sampleA);
+
+        /* When */
+        $result = Analyzer::create($modules)->analyze();
+
+        /* Then */
+        $this->assertCount(1, $result->errors);
+        $this->assertInstanceOf(UndefinedModule::class, $result->errors[0]);
         $this->assertEquals('ClassA.php', $result->errors[0]->file->getBasename());
         $this->assertEquals('Graphp\GraphViz\GraphViz', (string)$result->errors[0]->import);
     }
@@ -76,6 +95,7 @@ class ExternalDependencyAnalyzerTest extends TestCase
 
         /* Then */
         $this->assertCount(1, $result->errors);
+        $this->assertInstanceOf(MissingDependency::class, $result->errors[0]);
         $this->assertEquals('ClassB.php', $result->errors[0]->file->getBasename());
         $this->assertEquals('Sample\ModuleA\ClassA', (string)$result->errors[0]->import);
     }

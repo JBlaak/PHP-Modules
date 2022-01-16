@@ -3,6 +3,7 @@
 namespace Lib\Analyzer\Basic;
 
 use PhpModules\Lib\Analyzer;
+use PhpModules\Lib\Errors\MissingDependency;
 use PhpModules\Lib\Module;
 use PhpModules\Lib\Modules;
 use PHPUnit\Framework\TestCase;
@@ -40,6 +41,7 @@ class BasicAnalyzerTest extends TestCase
 
         /* Then */
         $this->assertCount(1, $result->errors);
+        $this->assertInstanceOf(MissingDependency::class, $result->errors[0]);
         $this->assertEquals('ClassB.php', $result->errors[0]->file->getBasename());
         $this->assertEquals('Sample\ModuleA\ClassA', (string)$result->errors[0]->import);
     }
@@ -56,6 +58,7 @@ class BasicAnalyzerTest extends TestCase
 
         /* Then */
         $this->assertCount(1, $result->errors);
+        $this->assertInstanceOf(MissingDependency::class, $result->errors[0]);
         $this->assertEquals('ClassB.php', $result->errors[0]->file->getBasename());
         $this->assertEquals('Sample\ModuleA\ClassA', (string)$result->errors[0]->import);
     }
