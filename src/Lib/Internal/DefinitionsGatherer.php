@@ -2,15 +2,15 @@
 
 namespace PhpModules\Lib\Internal;
 
+use PhpModules\Lib\Modules;
 use PhpParser\NodeTraverser;
 use PhpParser\ParserFactory;
 
 class DefinitionsGatherer
 {
-    public function __construct(private string $path)
+    public function __construct(private Modules $modules)
     {
     }
-
 
     /**
      * @return Definition[]
@@ -20,7 +20,7 @@ class DefinitionsGatherer
         $parser = (new ParserFactory)->create(ParserFactory::PREFER_PHP7);
         $traverser = new NodeTraverser;
 
-        $recursiveIteratorIterator = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($this->path));
+        $recursiveIteratorIterator = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($this->modules->path));
         $regexIterator = new \RegexIterator($recursiveIteratorIterator, '/\.php$/');
 
         $definitions = [];
@@ -48,17 +48,34 @@ class DefinitionsGatherer
 
             $parts = $importsCollector->namespace?->name?->parts;
             if ($parts !== null) {
-                $definitions[] = new Definition(
-                    $file,
-                    NamespaceName::fromArray($parts),
-                    $imports
-                );
+                $namespace = NamespaceName::fromArray($parts);
+                if ($this->isInModule($namespace)) {
+                    $definitions[] = new Definition(
+                        $file,
+                        $namespace,
+                        $imports
+                    );
+                }
             }
 
             $traverser->removeVisitor($importsCollector);
         }
 
         return $definitions;
+    }
+
+    /**
+     * @param NamespaceName $import
+     * @return bool
+     */
+    private function isInModule(NamespaceName $import): bool
+    {
+        foreach ($this->modules->modules as $module) {
+            if ($module->namespace->isParentOf($import)) {
+                return true;
+            }
+        }
+        return false;
     }
 
 }

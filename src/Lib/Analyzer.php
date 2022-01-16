@@ -7,8 +7,6 @@ use PhpModules\Lib\Internal\NamespaceName;
 
 class Analyzer
 {
-
-
     private function __construct(private Modules $modules)
     {
     }
@@ -20,7 +18,7 @@ class Analyzer
 
     public function analyze(): Result
     {
-        $definitionsGatherer = new DefinitionsGatherer($this->modules->path);
+        $definitionsGatherer = new DefinitionsGatherer($this->modules);
         $definitions = $definitionsGatherer->gather();
 
         /** @var DependencyError[] $errors */
