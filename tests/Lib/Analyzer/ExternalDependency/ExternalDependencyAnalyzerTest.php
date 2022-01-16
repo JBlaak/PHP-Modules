@@ -13,6 +13,7 @@ class ExternalDependencyAnalyzerTest extends TestCase
 
     const NAMESPACE_PROJECT = 'Sample';
     const NAMESPACE_MODULEA = 'Sample\ModuleA';
+    const NAMESPACE_MODULEB = 'Sample\ModuleB';
     const NAMESPACE_EXTERNAL = 'Graphp\GraphViz\GraphViz';
 
     public function test_run_definedDependencyShouldBeAllowed(): void
@@ -45,7 +46,7 @@ class ExternalDependencyAnalyzerTest extends TestCase
         $this->assertEquals('Graphp\GraphViz\GraphViz', (string)$result->errors[0]->dependency);
     }
 
-    public function test_run_allowImportsFromOutsideOfProjectNamespaces(): void
+    public function test_run_allowUndefinedModules_shouldAllowImportsFromOutsideOfDefinedModules(): void
     {
         /* Given */
         $sampleA = Module::create(self::NAMESPACE_MODULEA);
@@ -58,6 +59,25 @@ class ExternalDependencyAnalyzerTest extends TestCase
 
         /* Then */
         $this->assertCount(0, $result->errors);
+    }
+
+    public function test_run_allowUndefinedModules_requiresExplicitImportWhenImportIsFromModule(): void
+    {
+        /* Given */
+        $sampleA = Module::create(self::NAMESPACE_MODULEA);
+        $sampleB = Module::create(self::NAMESPACE_MODULEB);
+        $modules = Modules::builder(self::SAMPLE_DIR)
+            ->register($sampleA)
+            ->register($sampleB)
+            ->allowUndefinedModules();
+
+        /* When */
+        $result = Analyzer::create($modules)->analyze();
+
+        /* Then */
+        $this->assertCount(1, $result->errors);
+        $this->assertEquals('ClassB.php', $result->errors[0]->file->getBasename());
+        $this->assertEquals('Sample\ModuleA\ClassA', (string)$result->errors[0]->dependency);
     }
 }
 
