@@ -1,6 +1,6 @@
 <?php
 
-namespace Lib\Analyzer\StrictPublic;
+namespace Tests\Lib\Analyzer\StrictPublic;
 
 use PhpModules\Lib\Analyzer;
 use PhpModules\Lib\Module;

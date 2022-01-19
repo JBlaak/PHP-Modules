@@ -32,7 +32,7 @@ class DefinitionsGatherer
 
         /** @var \SplFileInfo $file */
         foreach ($regexIterator as $file) {
-            if($this->isIgnored($file)) {
+            if ($this->isIgnored($file)) {
                 continue;
             }
 
@@ -56,7 +56,9 @@ class DefinitionsGatherer
                 /** @var Importable[] $imports */
                 $imports = [];
                 foreach ($definitionCollector->imports as $import) {
-                    $imports[] = Importable::fromArray($import->name->parts);
+                    foreach ($import->uses as $use) {
+                        $imports[] = Importable::fromArray($use->name->parts, $import->getDocComment()?->getText());
+                    }
                 }
 
                 /** @var ClassDefinition[] $classDefinitions */
@@ -89,10 +91,10 @@ class DefinitionsGatherer
         return $definitions;
     }
 
-    private function isIgnored(\SplFileInfo $file):bool
+    private function isIgnored(\SplFileInfo $file): bool
     {
         foreach ($this->modules->ignoredFilenamePatterns as $ignoredFilenamePattern) {
-            if(preg_match($ignoredFilenamePattern, $file->getBasename()) === 1) {
+            if (preg_match($ignoredFilenamePattern, $file->getBasename()) === 1) {
                 return true;
             }
         }

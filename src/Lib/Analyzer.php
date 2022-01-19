@@ -30,12 +30,17 @@ class Analyzer
     {
     }
 
-    public static function create(Modules $modules): Analyzer
+    /**
+     * @param Modules $modules
+     * @param FileDefinition[] $definitions
+     * @return Analyzer
+     */
+    public static function create(Modules $modules, array $definitions = []): Analyzer
     {
-        // TODO move this to a separate step, this is a heavy step you wouldn't expect triggering
-        // when calling some simple `create` function
-        $definitionsGatherer = new DefinitionsGatherer($modules);
-        $definitions = $definitionsGatherer->gather();
+        if (empty($definitions)) {
+            $definitionsGatherer = new DefinitionsGatherer($modules);
+            $definitions = $definitionsGatherer->gather();
+        }
 
         return new Analyzer($modules, $definitions, new DocReader());
     }
@@ -61,6 +66,11 @@ class Analyzer
      */
     private function getErrors(\SplFileInfo $file, NamespaceName $namespace, Importable $import): array
     {
+        // Make sure the import isn't ignored
+        if ($this->docReader->isIgnoredImport($import->phpdoc)) {
+            return [];
+        }
+
         // Check if namespace is part of some module, if not, no errors
         $moduleOfNamespace = $this->getModule($namespace);
         if ($moduleOfNamespace === null) {

@@ -15,30 +15,36 @@ class Importable
      */
     public array $parts;
 
+    public ?string $phpdoc;
+
     /**
      * @param string[]|string $name
+     * @param string|null $phpdoc
      */
-    public function __construct(array|string $name)
+    private function __construct(array|string $name, ?string $phpdoc)
     {
         $this->parts = is_string($name) ? explode('\\', $name) : $name;
+        $this->phpdoc = $phpdoc;
     }
 
     /**
      * @param string $name
+     * @param string|null $phpdoc
      * @return Importable
      */
-    public static function fromString(string $name): Importable
+    public static function fromString(string $name, ?string $phpdoc): Importable
     {
-        return new Importable($name);
+        return new Importable($name, $phpdoc);
     }
 
     /**
      * @param string[] $parts
+     * @param string|null $phpdoc
      * @return Importable
      */
-    public static function fromArray(array $parts): Importable
+    public static function fromArray(array $parts, ?string $phpdoc): Importable
     {
-        return new Importable($parts);
+        return new Importable($parts, $phpdoc);
     }
 
     public function __toString()
