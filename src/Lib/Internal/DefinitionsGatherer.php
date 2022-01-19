@@ -56,8 +56,17 @@ class DefinitionsGatherer
                 /** @var Importable[] $imports */
                 $imports = [];
                 foreach ($definitionCollector->imports as $import) {
+                    $comment = $import->getDocComment()?->getText();
+                    //Make sure comments starting with `//` are also included
+                    if ($comment === null && count($import->getComments()) > 0) {
+                        $comment = [];
+                        foreach ($import->getComments() as $commentPart) {
+                            $comment[] = $commentPart->getText();
+                        }
+                        $comment = implode("\n", $comment);
+                    }
                     foreach ($import->uses as $use) {
-                        $imports[] = Importable::fromArray($use->name->parts, $import->getDocComment()?->getText());
+                        $imports[] = Importable::fromArray($use->name->parts, $comment);
                     }
                 }
 

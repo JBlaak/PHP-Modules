@@ -48,4 +48,25 @@ class IgnoreImportAnnotationTest extends AnalyzerTestCase
         $this->assertCount(0, $result->errors);
     }
 
+    public function test_shouldSucceedWithIgnoreImportAnnotation_alternativeSyntax(): void
+    {
+        /* Given */
+        $moduleAClassAFileDefinition = $this->file('App\ModuleA', ['App\ModuleA\ClassA']);
+        $moduleBClassBFileDefinition = $this->file(
+            'App\ModuleB',
+            ['App\ModuleB\ClassB'],
+            [Importable::fromString('App\ModuleA\ClassA', '// @modules-ignore-next-line')]
+        );
+
+        $moduleA = Module::create('App\ModuleA');
+        $moduleB = Module::create('App\ModuleB');
+        $modules = Modules::builder('.')->register([$moduleA, $moduleB]);
+
+        /* When */
+        $result = Analyzer::create($modules, [$moduleAClassAFileDefinition, $moduleBClassBFileDefinition])->analyze();
+
+        /* Then */
+        $this->assertCount(0, $result->errors);
+    }
+
 }
