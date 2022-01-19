@@ -32,6 +32,10 @@ class DefinitionsGatherer
 
         /** @var \SplFileInfo $file */
         foreach ($regexIterator as $file) {
+            if($this->isIgnored($file)) {
+                continue;
+            }
+
             $definitionCollector = new DefinitionCollector();
             $traverser->addVisitor($definitionCollector);
 
@@ -83,6 +87,16 @@ class DefinitionsGatherer
         }
 
         return $definitions;
+    }
+
+    private function isIgnored(\SplFileInfo $file):bool
+    {
+        foreach ($this->modules->ignoredFilenamePatterns as $ignoredFilenamePattern) {
+            if(preg_match($ignoredFilenamePattern, $file->getBasename()) === 1) {
+                return true;
+            }
+        }
+        return false;
     }
 
 }
