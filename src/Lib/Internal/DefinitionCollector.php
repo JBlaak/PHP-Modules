@@ -11,7 +11,7 @@ class DefinitionCollector extends NodeVisitorAbstract
     public ?Node\Stmt\Namespace_ $namespace = null;
 
     /**
-     * @var Node\Stmt\UseUse[]
+     * @var Node\Stmt\Use_[]
      */
     public array $imports = [];
 
@@ -26,9 +26,7 @@ class DefinitionCollector extends NodeVisitorAbstract
             $this->namespace = $node;
         }
         if ($node instanceof Node\Stmt\Use_) {
-            foreach ($node->uses as $use) {
-                $this->imports[] = $use;
-            }
+            $this->imports[] = $node;
         }
         if ($node instanceof Node\Stmt\Class_) {
             $this->classes[] = $node;

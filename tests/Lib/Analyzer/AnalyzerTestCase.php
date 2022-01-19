@@ -52,9 +52,11 @@ class AnalyzerTestCase extends TestCase
                 $importables[] = $import;
             }
             if (is_string($import)) {
-                $importables[] = new Importable($import);
+                $importables[] = Importable::fromString($import, null);
             }
         }
+
+        assert($path !== null);
 
         return new FileDefinition(
             new \SplFileInfo($path),

@@ -56,7 +56,9 @@ class DefinitionsGatherer
                 /** @var Importable[] $imports */
                 $imports = [];
                 foreach ($definitionCollector->imports as $import) {
-                    $imports[] = Importable::fromArray($import->name->parts);
+                    foreach ($import->uses as $use) {
+                        $imports[] = Importable::fromArray($use->name->parts, $import->getDocComment()?->getText());
+                    }
                 }
 
                 /** @var ClassDefinition[] $classDefinitions */

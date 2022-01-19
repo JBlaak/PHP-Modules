@@ -32,7 +32,7 @@ class Analyzer
 
     /**
      * @param Modules $modules
-     * @param FileDefinition[]
+     * @param FileDefinition[] $definitions
      * @return Analyzer
      */
     public static function create(Modules $modules, array $definitions = []): Analyzer
@@ -66,6 +66,11 @@ class Analyzer
      */
     private function getErrors(\SplFileInfo $file, NamespaceName $namespace, Importable $import): array
     {
+        // Make sure the import isn't ignored
+        if ($this->docReader->isIgnoredImport($import->phpdoc)) {
+            return [];
+        }
+
         // Check if namespace is part of some module, if not, no errors
         $moduleOfNamespace = $this->getModule($namespace);
         if ($moduleOfNamespace === null) {
