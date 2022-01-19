@@ -14,6 +14,12 @@ class Modules
     public bool $allowUndefinedModules = false;
 
     /**
+     * Filename patterns that shouldn't be included while analyzing, e.g. a ServiceProvider wiring implementations
+     * @var string[]
+     */
+    public array $ignoredFilenamePatterns = [];
+
+    /**
      * @param string $path
      * @param Module[] $modules
      */
@@ -54,6 +60,13 @@ class Modules
     public function allowUndefinedModules(): Modules
     {
         $this->allowUndefinedModules = true;
+        return $this;
+    }
+
+    public function ignoreFilenamePattern(string $ignoredFilenamePattern): Modules
+    {
+        $this->ignoredFilenamePatterns[] = $ignoredFilenamePattern;
+
         return $this;
     }
 

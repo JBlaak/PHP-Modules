@@ -63,5 +63,21 @@ class BasicAnalyzerTest extends TestCase
         $this->assertEquals('Sample\ModuleA\ClassA', (string)$result->errors[0]->import);
     }
 
+    public function test_run_ignoreFilenamePatter(): void
+    {
+        /* Given */
+        $sampleB = Module::create(self::NAMESPACE_MODULEB);
+        $sampleA = Module::create(self::NAMESPACE_MODULEA);
+        $modules = Modules::builder(self::SAMPLE_DIR)
+            ->register([$sampleA, $sampleB])
+            ->ignoreFilenamePattern('/.*B/i');
+
+        /* When */
+        $result = Analyzer::create($modules)->analyze();
+
+        /* Then */
+        $this->assertCount(0, $result->errors);
+    }
+
 }
 
