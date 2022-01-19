@@ -21,6 +21,7 @@ class DocReader
         if ($phpdoc === null) {
             return false;
         }
+        $phpdoc = $this->prepare($phpdoc);
         $lexer = new Lexer();
         $constExprParser = new ConstExprParser();
         $phpDocParser = new PhpDocParser(new TypeParser($constExprParser), $constExprParser);
@@ -31,11 +32,12 @@ class DocReader
         return count($phpDocNode->getTagsByName('@public')) > 0;
     }
 
-    public function isIgnoredImport(?string $phpdoc):bool
+    public function isIgnoredImport(?string $phpdoc): bool
     {
         if ($phpdoc === null) {
             return false;
         }
+        $phpdoc = $this->prepare($phpdoc);
         try {
             $lexer = new Lexer();
             $constExprParser = new ConstExprParser();
@@ -48,6 +50,23 @@ class DocReader
         } catch (ParserException $e) {
             return false;
         }
+    }
+
+    private function prepare(string $phpdoc): string
+    {
+        if (str_starts_with($phpdoc, '/**')) {
+            return $phpdoc;
+        }
+        if (str_starts_with($phpdoc, '//')) {
+            $lines = explode("\n", $phpdoc);
+            $result = '/**' . PHP_EOL;
+            foreach ($lines as $line) {
+                $result .= ' * ' . ltrim($line, '/ ') . PHP_EOL;
+            }
+            $result .= ' */';
+            return $result;
+        }
+        return $phpdoc;
     }
 
 }
