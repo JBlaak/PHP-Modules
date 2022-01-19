@@ -1,6 +1,6 @@
 <?php
 
-namespace Lib\Analyzer\Basic;
+namespace Tests\Lib\Analyzer\Basic;
 
 use PhpModules\Lib\Analyzer;
 use PhpModules\Lib\Errors\MissingDependency;

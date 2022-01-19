@@ -1,7 +1,7 @@
 <?php
 
 
-namespace Lib;
+namespace Tests\Lib;
 
 use PhpModules\Lib\Domain\NamespaceName;
 use PHPUnit\Framework\TestCase;

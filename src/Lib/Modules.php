@@ -37,6 +37,10 @@ class Modules
         return new Modules($path, $modules);
     }
 
+    /**
+     * @param string $path
+     * @return Modules
+     */
     public static function builder(string $path): Modules
     {
         return new Modules($path);

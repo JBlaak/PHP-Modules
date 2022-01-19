@@ -30,12 +30,17 @@ class Analyzer
     {
     }
 
-    public static function create(Modules $modules): Analyzer
+    /**
+     * @param Modules $modules
+     * @param FileDefinition[]
+     * @return Analyzer
+     */
+    public static function create(Modules $modules, array $definitions = []): Analyzer
     {
-        // TODO move this to a separate step, this is a heavy step you wouldn't expect triggering
-        // when calling some simple `create` function
-        $definitionsGatherer = new DefinitionsGatherer($modules);
-        $definitions = $definitionsGatherer->gather();
+        if (empty($definitions)) {
+            $definitionsGatherer = new DefinitionsGatherer($modules);
+            $definitions = $definitionsGatherer->gather();
+        }
 
         return new Analyzer($modules, $definitions, new DocReader());
     }
