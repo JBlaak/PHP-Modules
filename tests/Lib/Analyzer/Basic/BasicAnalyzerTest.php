@@ -14,6 +14,7 @@ class BasicAnalyzerTest extends TestCase
 
     const NAMESPACE_MODULEA = 'Sample\ModuleA';
     const NAMESPACE_MODULEB = 'Sample\ModuleB';
+    const NAMESPACE_MODULEC = 'Sample\ModuleC';
 
     public function test_run_definedDependencyShouldBeAllowed(): void
     {
@@ -63,7 +64,7 @@ class BasicAnalyzerTest extends TestCase
         $this->assertEquals('Sample\ModuleA\ClassA', (string)$result->errors[0]->import);
     }
 
-    public function test_run_ignoreFilenamePatter(): void
+    public function test_run_ignoreFilenamePattern(): void
     {
         /* Given */
         $sampleB = Module::create(self::NAMESPACE_MODULEB);
@@ -77,6 +78,40 @@ class BasicAnalyzerTest extends TestCase
 
         /* Then */
         $this->assertCount(0, $result->errors);
+    }
+
+    public function test_run_shouldErrorWhenImportIsAliasedWithoutDependency(): void
+    {
+        /* Given */
+        $sampleC = Module::create(self::NAMESPACE_MODULEC);
+        $sampleA = Module::create(self::NAMESPACE_MODULEA);
+        $modules = Modules::builder(self::SAMPLE_DIR)
+            ->register([$sampleA, $sampleC]);
+
+        /* When */
+        $result = Analyzer::create($modules)->analyze();
+
+        /* Then */
+        $this->assertCount(1, $result->errors);
+        $this->assertEquals('ClassC.php', $result->errors[0]->file->getBasename());
+        $this->assertEquals('Sample\ModuleA\ClassA', (string)$result->errors[0]->import);
+    }
+
+    public function test_run_shouldNotErrorWhenImportIsAliasedWithDependency(): void
+    {
+        /* Given */
+        $sampleC = Module::create(self::NAMESPACE_MODULEC);
+        $sampleA = Module::create(self::NAMESPACE_MODULEA, [$sampleC]);
+        $modules = Modules::builder(self::SAMPLE_DIR)
+            ->register([$sampleA, $sampleC]);
+
+        /* When */
+        $result = Analyzer::create($modules)->analyze();
+
+        /* Then */
+        $this->assertCount(1, $result->errors);
+        $this->assertEquals('ClassC.php', $result->errors[0]->file->getBasename());
+        $this->assertEquals('Sample\ModuleA\ClassA', (string)$result->errors[0]->import);
     }
 
 }
