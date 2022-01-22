@@ -9,7 +9,12 @@ class ModulesResolver
 
     public function get(): Modules
     {
-        $modules = require './modules.php';
+        $path = './modules.php';
+        if(!file_exists($path)) {
+            echo 'No `modules.php` file found at `'.$path.'`';
+            die(1);
+        }
+        $modules = require $path;
         if (!$modules instanceof Modules) {
             echo 'Your configuration file should return an instance of ' . Modules::class;
             die(1);
