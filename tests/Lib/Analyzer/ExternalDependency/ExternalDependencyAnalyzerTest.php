@@ -4,7 +4,7 @@ namespace Tests\Lib\Analyzer\ExternalDependency;
 
 use PhpModules\Lib\Analyzer;
 use PhpModules\Lib\Errors\MissingDependency;
-use PhpModules\Lib\Errors\UndefinedModule;
+use PhpModules\Lib\Errors\Undefined;
 use PhpModules\Lib\Module;
 use PhpModules\Lib\Modules;
 use PHPUnit\Framework\TestCase;
@@ -29,7 +29,7 @@ class ExternalDependencyAnalyzerTest extends TestCase
         $result = Analyzer::create($modules)->analyze();
 
         /* Then */
-        $this->assertCount(0, $result->errors);
+        $this->assertFalse($result->hasErrors());
     }
 
     public function test_run_undefinedDependencyShouldGiveAnError(): void
@@ -43,10 +43,11 @@ class ExternalDependencyAnalyzerTest extends TestCase
         $result = Analyzer::create($modules)->analyze();
 
         /* Then */
-        $this->assertCount(1, $result->errors);
-        $this->assertInstanceOf(MissingDependency::class, $result->errors[0]);
-        $this->assertEquals('ClassA.php', $result->errors[0]->file->getBasename());
-        $this->assertEquals('Graphp\GraphViz\GraphViz', (string)$result->errors[0]->import);
+        $errors = $result->getFileSpecificErrors();
+        $this->assertCount(1, $errors);
+        $this->assertInstanceOf(MissingDependency::class, $errors[0]);
+        $this->assertEquals('ClassA.php', basename($errors[0]->getFile()));
+        $this->assertStringContainsString('Graphp\GraphViz\GraphViz', $errors[0]->getMessage());
     }
 
     public function test_run_undefinedModuleShouldGiveProperError(): void
@@ -59,10 +60,11 @@ class ExternalDependencyAnalyzerTest extends TestCase
         $result = Analyzer::create($modules)->analyze();
 
         /* Then */
-        $this->assertCount(1, $result->errors);
-        $this->assertInstanceOf(UndefinedModule::class, $result->errors[0]);
-        $this->assertEquals('ClassA.php', $result->errors[0]->file->getBasename());
-        $this->assertEquals('Graphp\GraphViz\GraphViz', (string)$result->errors[0]->import);
+        $errors = $result->getFileSpecificErrors();
+        $this->assertCount(1, $errors);
+        $this->assertInstanceOf(Undefined::class, $errors[0]);
+        $this->assertEquals('ClassA.php', basename($errors[0]->getFile()));
+        $this->assertStringContainsString('Graphp\GraphViz\GraphViz', $errors[0]->getMessage());
     }
 
     public function test_run_allowUndefinedModules_shouldAllowImportsFromOutsideOfDefinedModules(): void
@@ -77,7 +79,7 @@ class ExternalDependencyAnalyzerTest extends TestCase
         $result = Analyzer::create($modules)->analyze();
 
         /* Then */
-        $this->assertCount(0, $result->errors);
+        $this->assertFalse($result->hasErrors());
     }
 
     public function test_run_allowUndefinedModules_requiresExplicitImportWhenImportIsFromModule(): void
@@ -94,10 +96,11 @@ class ExternalDependencyAnalyzerTest extends TestCase
         $result = Analyzer::create($modules)->analyze();
 
         /* Then */
-        $this->assertCount(1, $result->errors);
-        $this->assertInstanceOf(MissingDependency::class, $result->errors[0]);
-        $this->assertEquals('ClassB.php', $result->errors[0]->file->getBasename());
-        $this->assertEquals('Sample\ModuleA\ClassA', (string)$result->errors[0]->import);
+        $errors = $result->getFileSpecificErrors();
+        $this->assertCount(1, $errors);
+        $this->assertInstanceOf(MissingDependency::class, $errors[0]);
+        $this->assertEquals('ClassB.php', basename($errors[0]->getFile()));
+        $this->assertStringContainsString('Sample\ModuleA\ClassA', $errors[0]->getMessage());
     }
 }
 

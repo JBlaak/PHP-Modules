@@ -10,8 +10,8 @@ class ModulesResolver
     public function get(): Modules
     {
         $path = './modules.php';
-        if(!file_exists($path)) {
-            echo 'No `modules.php` file found at `'.$path.'`';
+        if (!file_exists($path)) {
+            echo 'No `modules.php` file found at `' . $path . '`';
             die(1);
         }
         $modules = require $path;

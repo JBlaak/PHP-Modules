@@ -12,13 +12,14 @@ $phpparser = Module::create('PhpParser');
 $phpdocparser = Module::create('PHPStan\PhpDocParser');
 $graph = Module::create('Fhaculty\Graph');
 $graphviz = Module::create('Graphp\GraphViz');
+$symfonyConsole = Module::create('Symfony\Component\Console');
 
-$dependencies = [$phpparser, $phpdocparser, $graph, $graphviz];
+$dependencies = [$phpparser, $phpdocparser, $graph, $graphviz, $symfonyConsole];
 
 /* Internal modules */
 $docreader = Module::strict('PhpModules\DocReader', [$phpdocparser]);
 $lib = Module::strict('PhpModules\Lib', [$phpparser, $docreader]);
-$cli = Module::strict('PhpModules\Cli', [$lib, $graph, $graphviz]);
+$cli = Module::strict('PhpModules\Cli', [$lib, $graph, $graphviz, $symfonyConsole]);
 
 $internal = [$docreader, $lib, $cli];
 
