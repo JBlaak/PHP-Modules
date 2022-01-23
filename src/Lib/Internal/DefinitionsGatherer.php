@@ -66,7 +66,11 @@ class DefinitionsGatherer
                         $comment = implode("\n", $comment);
                     }
                     foreach ($import->uses as $use) {
-                        $imports[] = Importable::fromArray($use->name->parts, $comment);
+                        $imports[] = Importable::fromArray(
+                            $use->name->parts,
+                            $use->getStartLine(),
+                            $comment
+                        );
                     }
                 }
 

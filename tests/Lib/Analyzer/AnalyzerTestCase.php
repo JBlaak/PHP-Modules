@@ -52,7 +52,7 @@ class AnalyzerTestCase extends TestCase
                 $importables[] = $import;
             }
             if (is_string($import)) {
-                $importables[] = Importable::fromString($import, null);
+                $importables[] = Importable::fromString($import, null, null);
             }
         }
 

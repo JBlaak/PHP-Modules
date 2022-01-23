@@ -6,10 +6,10 @@ use PhpModules\DocReader\DocReader;
 use PhpModules\Lib\Domain\FileDefinition;
 use PhpModules\Lib\Domain\Importable;
 use PhpModules\Lib\Domain\NamespaceName;
+use PhpModules\Lib\Errors\Error;
 use PhpModules\Lib\Errors\MissingDependency;
-use PhpModules\Lib\Errors\ModuleError;
 use PhpModules\Lib\Errors\NotPublicError;
-use PhpModules\Lib\Errors\UndefinedModule;
+use PhpModules\Lib\Errors\Undefined;
 use PhpModules\Lib\Internal\DefinitionsGatherer;
 
 /**
@@ -45,9 +45,9 @@ class Analyzer
         return new Analyzer($modules, $definitions, new DocReader());
     }
 
-    public function analyze(): Result
+    public function analyze(): AnalysisResult
     {
-        /** @var ModuleError[] $errors */
+        /** @var Error[] $errors */
         $errors = [];
         foreach ($this->definitions as $definition) {
             foreach ($definition->imports as $import) {
@@ -55,14 +55,14 @@ class Analyzer
             }
         }
 
-        return new Result($errors);
+        return new AnalysisResult($errors, []);
     }
 
     /**
      * @param \SplFileInfo $file
      * @param NamespaceName $namespace
      * @param Importable $import
-     * @return ModuleError[]
+     * @return Error[]
      */
     private function getErrors(\SplFileInfo $file, NamespaceName $namespace, Importable $import): array
     {
@@ -105,7 +105,7 @@ class Analyzer
         }
 
         if ($moduleOfImport === null) {
-            return [new UndefinedModule($file, $import)];
+            return [new Undefined($file, $import)];
         }
         return [new MissingDependency($file, $import, $moduleOfNamespace, $moduleOfImport)];
     }

@@ -26,7 +26,7 @@ class StrictPublicAnalyzerTest extends TestCase
         $result = Analyzer::create($modules)->analyze();
 
         /* Then */
-        $this->assertCount(0, $result->errors);
+        $this->assertFalse($result->hasErrors());
     }
 
     public function test_run_strictModule_cantImportNonPublicClass(): void
@@ -40,9 +40,10 @@ class StrictPublicAnalyzerTest extends TestCase
         $result = Analyzer::create($modules)->analyze();
 
         /* Then */
-        $this->assertCount(1, $result->errors);
-        $this->assertEquals('ClassB.php', $result->errors[0]->file->getBasename());
-        $this->assertEquals('Sample\ModuleA\Internal\InternalClassA', (string)$result->errors[0]->import);
+        $errors = $result->getFileSpecificErrors();
+        $this->assertCount(1, $errors);
+        $this->assertEquals('ClassB.php', basename($errors[0]->getFile()));
+        $this->assertStringContainsString('Sample\ModuleA\Internal\InternalClassA', $errors[0]->getMessage());
     }
 
 }

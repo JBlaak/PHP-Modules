@@ -24,7 +24,7 @@ class IgnoreImportAnnotationTest extends AnalyzerTestCase
         $result = Analyzer::create($modules, [$moduleAClassAFileDefinition, $moduleBClassBFileDefinition])->analyze();
 
         /* Then */
-        $this->assertCount(1, $result->errors);
+        $this->assertTrue($result->hasErrors());
     }
 
     public function test_shouldSucceedWithIgnoreImportAnnotation(): void
@@ -34,7 +34,7 @@ class IgnoreImportAnnotationTest extends AnalyzerTestCase
         $moduleBClassBFileDefinition = $this->file(
             'App\ModuleB',
             ['App\ModuleB\ClassB'],
-            [Importable::fromString('App\ModuleA\ClassA', '/** @modules-ignore-next-line */')]
+            [Importable::fromString('App\ModuleA\ClassA', null, '/** @modules-ignore-next-line */')]
         );
 
         $moduleA = Module::create('App\ModuleA');
@@ -45,7 +45,7 @@ class IgnoreImportAnnotationTest extends AnalyzerTestCase
         $result = Analyzer::create($modules, [$moduleAClassAFileDefinition, $moduleBClassBFileDefinition])->analyze();
 
         /* Then */
-        $this->assertCount(0, $result->errors);
+        $this->assertFalse($result->hasErrors());
     }
 
     public function test_shouldSucceedWithIgnoreImportAnnotation_alternativeSyntax(): void
@@ -55,7 +55,7 @@ class IgnoreImportAnnotationTest extends AnalyzerTestCase
         $moduleBClassBFileDefinition = $this->file(
             'App\ModuleB',
             ['App\ModuleB\ClassB'],
-            [Importable::fromString('App\ModuleA\ClassA', '// @modules-ignore-next-line')]
+            [Importable::fromString('App\ModuleA\ClassA', null, '// @modules-ignore-next-line')]
         );
 
         $moduleA = Module::create('App\ModuleA');
@@ -66,7 +66,7 @@ class IgnoreImportAnnotationTest extends AnalyzerTestCase
         $result = Analyzer::create($modules, [$moduleAClassAFileDefinition, $moduleBClassBFileDefinition])->analyze();
 
         /* Then */
-        $this->assertCount(0, $result->errors);
+        $this->assertFalse($result->hasErrors());
     }
 
 }
