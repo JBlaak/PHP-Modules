@@ -42,6 +42,9 @@ class TestCommand
         $modules = $this->modulesResolver->get();
         $result = Analyzer::create($modules)->analyze();
         $this->errorFormatter->formatErrors($result, $this->output());
+        if($result->hasErrors()) {
+            die(1);
+        }
     }
 
     private function output(): Output
