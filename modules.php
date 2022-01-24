@@ -13,13 +13,14 @@ $phpdocparser = Module::create('PHPStan\PhpDocParser');
 $graph = Module::create('Fhaculty\Graph');
 $graphviz = Module::create('Graphp\GraphViz');
 $symfonyConsole = Module::create('Symfony\Component\Console');
+$ciDetector = Module::create('OndraM\CiDetector');
 
 $dependencies = [$phpparser, $phpdocparser, $graph, $graphviz, $symfonyConsole];
 
 /* Internal modules */
 $docreader = Module::strict('PhpModules\DocReader', [$phpdocparser]);
 $lib = Module::strict('PhpModules\Lib', [$phpparser, $docreader]);
-$cli = Module::strict('PhpModules\Cli', [$lib, $graph, $graphviz, $symfonyConsole]);
+$cli = Module::strict('PhpModules\Cli', [$lib, $graph, $graphviz, $symfonyConsole, $ciDetector]);
 
 $internal = [$docreader, $lib, $cli];
 

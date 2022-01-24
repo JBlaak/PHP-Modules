@@ -2,8 +2,10 @@
 
 namespace PhpModules\Cli;
 
+use OndraM\CiDetector\CiDetector;
 use PhpModules\Cli\ErrorFormatter\ErrorFormatter;
 use PhpModules\Cli\ErrorFormatter\ErrorsConsoleStyle;
+use PhpModules\Cli\ErrorFormatter\GithubErrorFormatter;
 use PhpModules\Cli\ErrorFormatter\Output;
 use PhpModules\Cli\ErrorFormatter\Symfony\SymfonyOutput;
 use PhpModules\Cli\ErrorFormatter\Symfony\SymfonyStyle;
@@ -23,7 +25,16 @@ class TestCommand
 
     public static function create(): TestCommand
     {
-        return new TestCommand(new ModulesResolver(), new TableErrorFormatter());
+        /** @var ErrorFormatter $errorFormatter */
+        $errorFormatter = new TableErrorFormatter();
+        $ciDetector = new CiDetector();
+        if ($ciDetector->isCiDetected()) {
+            $ci = $ciDetector->detect();
+            if ($ci->getCiName() === CiDetector::CI_GITHUB_ACTIONS) {
+                $errorFormatter = new GithubErrorFormatter(new TableErrorFormatter());
+            }
+        }
+        return new TestCommand(new ModulesResolver(), $errorFormatter);
     }
 
     public function run(): void
