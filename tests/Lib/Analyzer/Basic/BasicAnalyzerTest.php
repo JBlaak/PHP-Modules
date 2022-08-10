@@ -52,7 +52,7 @@ class BasicAnalyzerTest extends TestCase
     {
         /* Given */
         $sampleB = Module::create(self::NAMESPACE_MODULEB);
-        $sampleA = Module::create(self::NAMESPACE_MODULEA, [$sampleB]);
+        $sampleA = Module::create(self::NAMESPACE_MODULEA);
         $modules = Modules::create(self::SAMPLE_DIR, [$sampleA, $sampleB]);
 
         /* When */
@@ -104,7 +104,7 @@ class BasicAnalyzerTest extends TestCase
     {
         /* Given */
         $sampleC = Module::create(self::NAMESPACE_MODULEC);
-        $sampleA = Module::create(self::NAMESPACE_MODULEA, [$sampleC]);
+        $sampleA = Module::create(self::NAMESPACE_MODULEA);
         $modules = Modules::builder(self::SAMPLE_DIR)
             ->register([$sampleA, $sampleC]);
 
