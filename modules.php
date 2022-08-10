@@ -15,7 +15,7 @@ $graphviz = Module::create('Graphp\GraphViz');
 $symfonyConsole = Module::create('Symfony\Component\Console');
 $ciDetector = Module::create('OndraM\CiDetector');
 
-$dependencies = [$phpparser, $phpdocparser, $graph, $graphviz, $symfonyConsole];
+$dependencies = [$phpparser, $phpdocparser, $graph, $graphviz, $symfonyConsole, $ciDetector];
 
 /* Internal modules */
 $docreader = Module::strict('PhpModules\DocReader', [$phpdocparser]);

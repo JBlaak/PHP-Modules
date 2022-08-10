@@ -15,6 +15,10 @@ class StrictPublicAnalyzerTest extends TestCase
     const NAMESPACE_MODULEA = 'Sample\ModuleA';
     const NAMESPACE_MODULEB = 'Sample\ModuleB';
 
+    //Used by neither ModuleA nor ModuleB
+    const NAMESPACE_MODULEC = 'Sample\ModuleC';
+
+
     public function test_run_nonStrictModule_canImportNonPublicClass(): void
     {
         /* Given */
@@ -44,6 +48,21 @@ class StrictPublicAnalyzerTest extends TestCase
         $this->assertCount(1, $errors);
         $this->assertEquals('ClassB.php', basename($errors[0]->getFile()));
         $this->assertStringContainsString('Sample\ModuleA\Internal\InternalClassA', $errors[0]->getMessage());
+    }
+
+    public function test_run_strictModule_cantHaveUnusedDependencies(): void
+    {
+        /* Given */
+        $sampleC = Module::strict(self::NAMESPACE_MODULEC, []);
+        $sampleA = Module::strict(self::NAMESPACE_MODULEA, [$sampleC]);
+        $modules = Modules::create(self::SAMPLE_DIR, [$sampleA, $sampleC]);
+
+        /* When */
+        $result = Analyzer::create($modules)->analyze();
+
+        /* Then */
+        $errors = $result->getFileSpecificErrors();
+        $this->assertCount(1, $errors);
     }
 
 }

@@ -10,7 +10,9 @@ use PhpModules\Lib\Errors\Error;
 use PhpModules\Lib\Errors\MissingDependency;
 use PhpModules\Lib\Errors\NotPublicError;
 use PhpModules\Lib\Errors\Undefined;
+use PhpModules\Lib\Errors\UnusedDependency;
 use PhpModules\Lib\Internal\DefinitionsGatherer;
+use PhpModules\Lib\Internal\SingleDependency;
 
 /**
  * @public
@@ -47,13 +49,17 @@ class Analyzer
 
     public function analyze(): AnalysisResult
     {
+        $allDependencies = $this->listAllDependencies();
+
         /** @var Error[] $errors */
         $errors = [];
         foreach ($this->definitions as $definition) {
             foreach ($definition->imports as $import) {
-                $errors = array_merge($errors, $this->getErrors($definition->file, $definition->namespaceName, $import));
+                $errors = array_merge($errors, $this->getErrors($definition->file, $definition->namespaceName, $import, $allDependencies));
             }
         }
+
+        $errors = array_merge($errors, $this->getErrorsFromUnusedDependencies($allDependencies));
 
         return new AnalysisResult($errors, []);
     }
@@ -62,9 +68,10 @@ class Analyzer
      * @param \SplFileInfo $file
      * @param NamespaceName $namespace
      * @param Importable $import
+     * @param SingleDependency[] $allDependencies
      * @return Error[]
      */
-    private function getErrors(\SplFileInfo $file, NamespaceName $namespace, Importable $import): array
+    private function getErrors(\SplFileInfo $file, NamespaceName $namespace, Importable $import, array $allDependencies): array
     {
         // Make sure the import isn't ignored
         if ($this->docReader->isIgnoredImport($import->phpdoc)) {
@@ -87,6 +94,11 @@ class Analyzer
         // It is always allowed to import from your own module
         if ($moduleOfImport === $moduleOfNamespace) {
             return [];
+        }
+
+        //If module of namespace is importing the module of import the dependency is used
+        if ($moduleOfImport !== null) {
+            $this->markUsed($moduleOfNamespace, $moduleOfImport, $allDependencies);
         }
 
         // If module of import is marked as a strict module the import should be marked as public
@@ -131,5 +143,51 @@ class Analyzer
         }
 
         return true;
+    }
+
+    /**
+     * @return SingleDependency[]
+     */
+    private function listAllDependencies(): array
+    {
+        /** @var SingleDependency[] $allDependencies */
+        $allDependencies = [];
+        foreach ($this->modules->modules as $module) {
+            foreach ($module->dependencies as $dependency) {
+                $allDependencies[] = new SingleDependency($module, $dependency);
+            }
+        }
+        return $allDependencies;
+    }
+
+    /**
+     * @param Module $moduleOfNamespace
+     * @param Module $moduleOfImport
+     * @param SingleDependency[] $allDependencies
+     * @return void
+     */
+    private function markUsed(Module $moduleOfNamespace, Module $moduleOfImport, array $allDependencies)
+    {
+        foreach ($allDependencies as $dependency) {
+            if ($dependency->module === $moduleOfNamespace && $dependency->dependency === $moduleOfImport) {
+                $dependency->isUsed = true;
+            }
+        }
+    }
+
+    /**
+     * @param SingleDependency[] $allDependencies
+     * @return Error[]
+     */
+    private function getErrorsFromUnusedDependencies(array $allDependencies): array
+    {
+        $errors = [];
+        foreach ($allDependencies as $dependency) {
+            if (!$dependency->isUsed) {
+                $errors[] = new UnusedDependency($dependency->module, $dependency->dependency);
+            }
+        }
+
+        return $errors;
     }
 }
