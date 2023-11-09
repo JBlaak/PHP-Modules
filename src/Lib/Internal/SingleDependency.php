@@ -12,4 +12,9 @@ class SingleDependency
     public function __construct(public Module $module, public Module $dependency)
     {
     }
+
+    public function __toString()
+    {
+        return $this->module->namespace . ' -> ' . $this->dependency->namespace;
+    }
 }

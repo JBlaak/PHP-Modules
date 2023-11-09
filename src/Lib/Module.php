@@ -58,14 +58,9 @@ class Module
         return new Module($namespace, $dependencies, true);
     }
 
-    public function allowsImport(Importable $import): bool
+    public function __toString()
     {
-        foreach ($this->dependencies as $dependency) {
-            if ($dependency->namespace->isParentOf($import)) {
-                return true;
-            }
-        }
-        return false;
+        return $this->namespace->__toString();
     }
 
 }
