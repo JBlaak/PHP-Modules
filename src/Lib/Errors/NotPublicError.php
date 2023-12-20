@@ -4,13 +4,14 @@ namespace PhpModules\Lib\Errors;
 
 use PhpModules\Lib\Domain\Importable;
 use PhpModules\Lib\Module;
+use SplFileInfo;
 
 class NotPublicError extends Error
 {
 
 
     public function __construct(
-        public \SplFileInfo $file,
+        public SplFileInfo $file,
         public Importable   $import,
         private Module      $strictModule
     )

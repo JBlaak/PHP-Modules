@@ -10,6 +10,7 @@ use PhpModules\Lib\Domain\NamespaceName;
 use PhpModules\Lib\Modules;
 use PhpParser\NodeTraverser;
 use PhpParser\ParserFactory;
+use SplFileInfo;
 
 class DefinitionsGatherer
 {
@@ -30,7 +31,7 @@ class DefinitionsGatherer
 
         $definitions = [];
 
-        /** @var \SplFileInfo $file */
+        /** @var SplFileInfo $file */
         foreach ($regexIterator as $file) {
             if ($this->isIgnored($file)) {
                 continue;
@@ -104,7 +105,7 @@ class DefinitionsGatherer
         return $definitions;
     }
 
-    private function isIgnored(\SplFileInfo $file): bool
+    private function isIgnored(SplFileInfo $file): bool
     {
         foreach ($this->modules->ignoredFilenamePatterns as $ignoredFilenamePattern) {
             if (preg_match($ignoredFilenamePattern, $file->getBasename()) === 1) {

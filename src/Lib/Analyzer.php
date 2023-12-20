@@ -16,6 +16,7 @@ use PhpModules\Lib\Errors\UnusedDependency;
 use PhpModules\Lib\Internal\DefinitionsGatherer;
 use PhpModules\Lib\Internal\ModulesProcessor;
 use PhpModules\Lib\Internal\SingleDependency;
+use ReflectionClass;
 
 /**
  * @public
@@ -79,7 +80,6 @@ class Analyzer
      */
     private function getErrors(FileDefinition $fileDefinition, Importable $import, array $allDependencies): array
     {
-
         // Make sure the import isn't ignored
         if ($this->docReader->isIgnoredImport($import->phpdoc)) {
             return [];
@@ -95,6 +95,10 @@ class Analyzer
         // if allowed to import undefined modules no errors
         $moduleOfImport = $this->getModule($import);
         if ($this->modules->allowUndefinedModules && $moduleOfImport === null) {
+            return [];
+        }
+        //If import is from a PHP internal module even if we're not allowing undefined modules we should allow it
+        if ($moduleOfImport === null && $this->modules->allowUndefinedModules === false && $this->isInternalModule($import)) {
             return [];
         }
 
@@ -216,5 +220,19 @@ class Analyzer
             }
         }
         return $moduleOfNamespace;
+    }
+
+    private function isInternalModule(Importable $import): bool
+    {
+        $internalDefinedClasses = array_filter(
+            get_declared_classes(),
+            function ($className) {
+                return call_user_func(
+                    array(new ReflectionClass($className), 'isInternal')
+                );
+            }
+        );
+
+        return in_array((string)$import, $internalDefinedClasses);
     }
 }

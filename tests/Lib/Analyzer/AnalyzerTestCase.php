@@ -8,6 +8,7 @@ use PhpModules\Lib\Domain\FileDefinition;
 use PhpModules\Lib\Domain\Importable;
 use PhpModules\Lib\Domain\NamespaceName;
 use PHPUnit\Framework\TestCase;
+use SplFileInfo;
 
 class AnalyzerTestCase extends TestCase
 {
@@ -59,7 +60,7 @@ class AnalyzerTestCase extends TestCase
         assert($path !== null);
 
         return new FileDefinition(
-            new \SplFileInfo($path),
+            new SplFileInfo($path),
             NamespaceName::fromString($namespace),
             $classDefinitions,
             $importables
