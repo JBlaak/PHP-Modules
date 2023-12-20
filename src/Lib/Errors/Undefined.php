@@ -3,12 +3,13 @@
 namespace PhpModules\Lib\Errors;
 
 use PhpModules\Lib\Domain\Importable;
+use SplFileInfo;
 
 class Undefined extends Error
 {
 
     public function __construct(
-        public \SplFileInfo $file,
+        public SplFileInfo $file,
         public Importable   $import,
     )
     {
