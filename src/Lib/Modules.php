@@ -2,6 +2,8 @@
 
 namespace PhpModules\Lib;
 
+use PhpModules\Exceptions\PHPModulesException;
+
 /**
  * @public
  */
@@ -18,6 +20,12 @@ class Modules
      * @var string[]
      */
     public array $ignoredFilenamePatterns = [];
+
+    /**
+     * Should scan directories for modules and files
+     * @var bool
+     */
+    public bool $shouldScanDirectories = false;
 
     /**
      * @param string $path
@@ -43,6 +51,10 @@ class Modules
      */
     public static function builder(string $path): Modules
     {
+        if (!str_starts_with($path, '/')) {
+            throw new PHPModulesException('Modules path must be absolute');
+        }
+
         return new Modules($path);
     }
 
@@ -70,6 +82,13 @@ class Modules
     public function ignoreFilenamePattern(string $ignoredFilenamePattern): Modules
     {
         $this->ignoredFilenamePatterns[] = $ignoredFilenamePattern;
+
+        return $this;
+    }
+
+    public function scanDirectories(): Modules
+    {
+        $this->shouldScanDirectories = true;
 
         return $this;
     }

@@ -18,7 +18,7 @@ class IgnoreImportAnnotationTest extends AnalyzerTestCase
 
         $moduleA = Module::create('App\ModuleA');
         $moduleB = Module::create('App\ModuleB');
-        $modules = Modules::builder('.')->register([$moduleA, $moduleB]);
+        $modules = Modules::builder(__DIR__)->register([$moduleA, $moduleB]);
 
         /* When */
         $result = Analyzer::create($modules, [$moduleAClassAFileDefinition, $moduleBClassBFileDefinition])->analyze();
@@ -39,7 +39,7 @@ class IgnoreImportAnnotationTest extends AnalyzerTestCase
 
         $moduleA = Module::create('App\ModuleA');
         $moduleB = Module::create('App\ModuleB');
-        $modules = Modules::builder('.')->register([$moduleA, $moduleB]);
+        $modules = Modules::builder(__DIR__)->register([$moduleA, $moduleB]);
 
         /* When */
         $result = Analyzer::create($modules, [$moduleAClassAFileDefinition, $moduleBClassBFileDefinition])->analyze();
@@ -60,7 +60,7 @@ class IgnoreImportAnnotationTest extends AnalyzerTestCase
 
         $moduleA = Module::create('App\ModuleA');
         $moduleB = Module::create('App\ModuleB');
-        $modules = Modules::builder('.')->register([$moduleA, $moduleB]);
+        $modules = Modules::builder(__DIR__)->register([$moduleA, $moduleB]);
 
         /* When */
         $result = Analyzer::create($modules, [$moduleAClassAFileDefinition, $moduleBClassBFileDefinition])->analyze();

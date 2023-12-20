@@ -3,6 +3,7 @@
 namespace PhpModules\Lib;
 
 use PhpModules\DocReader\DocReader;
+use PhpModules\Exceptions\PHPModulesException;
 use PhpModules\Lib\Domain\ClassName;
 use PhpModules\Lib\Domain\FileDefinition;
 use PhpModules\Lib\Domain\Importable;
@@ -13,6 +14,7 @@ use PhpModules\Lib\Errors\NotPublicError;
 use PhpModules\Lib\Errors\Undefined;
 use PhpModules\Lib\Errors\UnusedDependency;
 use PhpModules\Lib\Internal\DefinitionsGatherer;
+use PhpModules\Lib\Internal\ModulesProcessor;
 use PhpModules\Lib\Internal\SingleDependency;
 
 /**
@@ -37,9 +39,13 @@ class Analyzer
      * @param Modules $modules
      * @param FileDefinition[] $fileDefinitions
      * @return Analyzer
+     * @throws PHPModulesException
      */
     public static function create(Modules $modules, array $fileDefinitions = []): Analyzer
     {
+        $modulesProcessor = new ModulesProcessor($modules);
+        $modules = $modulesProcessor->process();
+
         if (empty($fileDefinitions)) {
             $definitionsGatherer = new DefinitionsGatherer($modules);
             $fileDefinitions = $definitionsGatherer->gather();

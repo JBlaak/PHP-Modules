@@ -19,11 +19,12 @@ $dependencies = [$phpparser, $phpdocparser, $graph, $graphviz, $symfonyConsole, 
 
 /* Internal modules */
 $docreader = Module::strict('PhpModules\DocReader', [$phpdocparser]);
-$lib = Module::strict('PhpModules\Lib', [$phpparser, $docreader]);
+$exceptions = Module::strict('PhpModules\Exceptions');
+$lib = Module::strict('PhpModules\Lib', [$phpparser, $docreader, $exceptions]);
 $cli = Module::strict('PhpModules\Cli', [$lib, $graph, $graphviz, $symfonyConsole, $ciDetector]);
 
-$internal = [$docreader, $lib, $cli];
+$internal = [$docreader, $exceptions, $lib, $cli];
 
-return Modules::builder('./src')
+return Modules::builder(__DIR__ . '/src')
     ->register($dependencies)
     ->register($internal);
