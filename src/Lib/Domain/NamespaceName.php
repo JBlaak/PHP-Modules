@@ -49,6 +49,11 @@ class NamespaceName
         return true;
     }
 
+    public function isEqual(NamespaceName $namespace): bool
+    {
+        return (string)$namespace === (string)$this;
+    }
+
     public function __toString()
     {
         return implode('\\', $this->parts);
