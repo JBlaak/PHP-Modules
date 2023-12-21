@@ -2,7 +2,6 @@
 
 namespace PhpModules\Lib;
 
-use PhpModules\Lib\Domain\Importable;
 use PhpModules\Lib\Domain\NamespaceName;
 
 /**
@@ -17,7 +16,7 @@ class Module
     public NamespaceName $namespace;
 
     /**
-     * @var Module[]
+     * @var Module[]|Reference[]
      */
     public array $dependencies = [];
 
@@ -28,7 +27,7 @@ class Module
 
     /**
      * @param NamespaceName|string $namespace
-     * @param Module[] $dependencies
+     * @param Module[]|Reference[] $dependencies
      * @param bool $strict
      */
     private function __construct(NamespaceName|string $namespace, array $dependencies, bool $strict)
@@ -40,7 +39,7 @@ class Module
 
     /**
      * @param NamespaceName|string $namespace
-     * @param Module[] $dependencies
+     * @param Module[]|Reference[] $dependencies
      * @return Module
      */
     public static function create(NamespaceName|string $namespace, array $dependencies = []): Module
@@ -50,7 +49,7 @@ class Module
 
     /**
      * @param NamespaceName|string $namespace
-     * @param Module[] $dependencies
+     * @param Module[]|Reference[] $dependencies
      * @return Module
      */
     public static function strict(NamespaceName|string $namespace, array $dependencies = []): Module

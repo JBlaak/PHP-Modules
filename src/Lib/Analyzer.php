@@ -166,6 +166,13 @@ class Analyzer
         $allDependencies = [];
         foreach ($this->modules->modules as $module) {
             foreach ($module->dependencies as $dependency) {
+                if ($dependency instanceof Reference) {
+                    $dependencyForReference = $this->findModuleForReference($dependency, $this->modules->modules);
+                    if ($dependencyForReference === null) {
+                        throw new PHPModulesException('Could not find module for reference ' . $dependency->namespace);
+                    }
+                    $dependency = $dependencyForReference;
+                }
                 $singleDependency = new SingleDependency($module, $dependency);
                 $allDependencies[] = $singleDependency;
             }
@@ -234,5 +241,21 @@ class Analyzer
         );
 
         return in_array((string)$import, $internalDefinedClasses);
+    }
+
+    /**
+     * @param Reference $dependency
+     * @param Module[]|Reference[] $modules
+     * @return Module|null
+     */
+    private function findModuleForReference(Reference $dependency, array $modules): ?Module
+    {
+        foreach ($modules as $module) {
+            if ($module instanceof Module && $module->namespace->isEqual($dependency->namespace)) {
+                return $module;
+            }
+        }
+
+        return null;
     }
 }
