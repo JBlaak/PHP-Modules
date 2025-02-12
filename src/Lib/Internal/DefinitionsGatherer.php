@@ -87,6 +87,17 @@ class DefinitionsGatherer
                     }
                 }
 
+                foreach ($definitionCollector->enums as $enumStmt) {
+                    if ($enumStmt->name !== null) {
+                        $enumDefinition = new ClassDefinition(
+                            ClassName::fromNamespaceAndClassName($namespace, $enumStmt->name),
+                            $enumStmt->getDocComment()?->getText(),
+                            true
+                        );
+                        $classDefinitions[] = $enumDefinition;
+                    }
+                }
+
                 if (count($classDefinitions) === 0) {
                     continue;
                 }

@@ -20,6 +20,11 @@ class DefinitionCollector extends NodeVisitorAbstract
      */
     public array $classes = [];
 
+    /**
+     * @var Node\Stmt\Enum_[]
+     */
+    public array $enums = [];
+
     public function leaveNode(Node $node)
     {
         if ($node instanceof Node\Stmt\Namespace_) {
@@ -30,6 +35,9 @@ class DefinitionCollector extends NodeVisitorAbstract
         }
         if ($node instanceof Node\Stmt\Class_) {
             $this->classes[] = $node;
+        }
+        if ($node instanceof Node\Stmt\Enum_) {
+            $this->enums[] = $node;
         }
         return $node;
     }
