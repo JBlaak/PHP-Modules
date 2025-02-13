@@ -26,6 +26,7 @@ class AnalyzerTestCase extends TestCase
         $classDefinitions = [];
         foreach ($classes as $class) {
             if ($path === null) {
+                /** @var ClassName|string|null $className */
                 $className = null;
                 if ($class instanceof ClassDefinition) {
                     $className = $class->className;

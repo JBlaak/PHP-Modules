@@ -25,7 +25,6 @@ class TestCommand
 
     public static function create(): TestCommand
     {
-        /** @var ErrorFormatter $errorFormatter */
         $errorFormatter = new TableErrorFormatter();
         $ciDetector = new CiDetector();
         if ($ciDetector->isCiDetected()) {
