@@ -18,6 +18,8 @@ class StrictPublicAnalyzerTest extends TestCase
     //Used by neither ModuleA nor ModuleB
     const NAMESPACE_MODULEC = 'Sample\ModuleC';
 
+    //Imports enums from ModuleA
+    const NAMESPACE_MODULED = 'Sample\ModuleD';
 
     public function test_run_nonStrictModule_canImportNonPublicClass(): void
     {
@@ -65,5 +67,20 @@ class StrictPublicAnalyzerTest extends TestCase
         $this->assertCount(1, $errors);
     }
 
-}
+    public function test_run_strictModule_cantImportNonPublicEnum(): void
+    {
+        /* Given */
+        $sampleA = Module::strict(self::NAMESPACE_MODULEA, []);
+        $sampleD = Module::strict(self::NAMESPACE_MODULED, [$sampleA]);
+        $modules = Modules::create(self::SAMPLE_DIR, [$sampleA, $sampleD]);
 
+        /* When */
+        $result = Analyzer::create($modules)->analyze();
+
+        /* Then */
+        $errors = $result->getFileSpecificErrors();
+        $this->assertCount(1, $errors);
+        $this->assertEquals('ClassD.php', basename($errors[0]->getFile()));
+        $this->assertStringContainsString('Sample\ModuleA\Internal\InternalEnumA', $errors[0]->getMessage());
+    }
+}

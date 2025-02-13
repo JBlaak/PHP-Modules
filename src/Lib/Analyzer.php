@@ -80,6 +80,7 @@ class Analyzer
      */
     private function getErrors(FileDefinition $fileDefinition, Importable $import, array $allDependencies): array
     {
+
         // Make sure the import isn't ignored
         if ($this->docReader->isIgnoredImport($import->phpdoc)) {
             return [];
@@ -87,6 +88,7 @@ class Analyzer
 
         // Check if file is part of some module, if not, no errors
         $moduleOfFile = $this->findModule($fileDefinition);
+
         if ($moduleOfFile === null) {
             return [];
         }

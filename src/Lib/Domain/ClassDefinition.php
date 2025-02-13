@@ -7,8 +7,10 @@ namespace PhpModules\Lib\Domain;
  */
 class ClassDefinition
 {
+    public bool $isEnum;
 
-    public function __construct(public ClassName $className, public ?string $phpdoc)
+    public function __construct(public ClassName $className, public ?string $phpdoc, bool $isEnum = false)
     {
+        $this->isEnum = $isEnum;
     }
 }
