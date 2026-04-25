@@ -2,11 +2,10 @@
 
 namespace Sample\SectionB\SectionBModuleB;
 
+use PhpModules\Attributes\Exposed;
 use Sample\SectionA\SectionAModuleB\ABClass;
 
-/**
- * @public
- */
+#[Exposed]
 class BBClass
 {
 

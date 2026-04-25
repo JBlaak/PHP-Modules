@@ -2,11 +2,10 @@
 
 namespace Sample\ModuleC;
 
+use PhpModules\Attributes\Exposed;
 use Sample\ModuleC\Internal\InternalClassC;
 
-/**
- * @public
- */
+#[Exposed]
 class ClassC
 {
 

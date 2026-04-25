@@ -6,9 +6,12 @@ use PhpModules\Lib\Domain\ClassDefinition;
 use PhpModules\Lib\Domain\ClassName;
 use PhpModules\Lib\Domain\FileDefinition;
 use PhpModules\Lib\Domain\Importable;
+use PhpModules\Attributes\Exposed;
 use PhpModules\Lib\Domain\NamespaceName;
 use PhpModules\Lib\Modules;
+use PhpParser\Node;
 use PhpParser\NodeTraverser;
+use PhpParser\NodeVisitor\NameResolver;
 use PhpParser\ParserFactory;
 use SplFileInfo;
 
@@ -25,6 +28,7 @@ class DefinitionsGatherer
     {
         $parser = (new ParserFactory)->create(ParserFactory::PREFER_PHP7);
         $traverser = new NodeTraverser;
+        $traverser->addVisitor(new NameResolver());
 
         $recursiveIteratorIterator = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($this->modules->path));
         $regexIterator = new \RegexIterator($recursiveIteratorIterator, '/\.php$/');
@@ -81,7 +85,7 @@ class DefinitionsGatherer
                     if ($classStmt->name !== null) {
                         $classDefinition = new ClassDefinition(
                             ClassName::fromNamespaceAndClassName($namespace, $classStmt->name),
-                            $classStmt->getDocComment()?->getText()
+                            $this->hasExposedAttribute($classStmt)
                         );
                         $classDefinitions[] = $classDefinition;
                     }
@@ -91,7 +95,7 @@ class DefinitionsGatherer
                     if ($enumStmt->name !== null) {
                         $enumDefinition = new ClassDefinition(
                             ClassName::fromNamespaceAndClassName($namespace, $enumStmt->name),
-                            $enumStmt->getDocComment()?->getText(),
+                            $this->hasExposedAttribute($enumStmt),
                             true
                         );
                         $classDefinitions[] = $enumDefinition;
@@ -121,6 +125,18 @@ class DefinitionsGatherer
         foreach ($this->modules->ignoredFilenamePatterns as $ignoredFilenamePattern) {
             if (preg_match($ignoredFilenamePattern, $file->getBasename()) === 1) {
                 return true;
+            }
+        }
+        return false;
+    }
+
+    private function hasExposedAttribute(Node\Stmt\Class_|Node\Stmt\Enum_ $stmt): bool
+    {
+        foreach ($stmt->attrGroups as $attrGroup) {
+            foreach ($attrGroup->attrs as $attr) {
+                if ($attr->name->toString() === Exposed::class) {
+                    return true;
+                }
             }
         }
         return false;

@@ -18,12 +18,13 @@ $ciDetector = Module::create('OndraM\CiDetector');
 $dependencies = [$phpparser, $phpdocparser, $graph, $graphviz, $symfonyConsole, $ciDetector];
 
 /* Internal modules */
-$docreader = Module::strict('PhpModules\DocReader', [$phpdocparser]);
-$exceptions = Module::strict('PhpModules\Exceptions');
-$lib = Module::strict('PhpModules\Lib', [$phpparser, $docreader, $exceptions]);
-$cli = Module::strict('PhpModules\Cli', [$lib, $graph, $graphviz, $symfonyConsole, $ciDetector]);
+$attributes = Module::create('PhpModules\Attributes');
+$docreader = Module::strict('PhpModules\DocReader', [$phpdocparser, $attributes]);
+$exceptions = Module::strict('PhpModules\Exceptions', [$attributes]);
+$lib = Module::strict('PhpModules\Lib', [$phpparser, $docreader, $exceptions, $attributes]);
+$cli = Module::strict('PhpModules\Cli', [$lib, $graph, $graphviz, $symfonyConsole, $ciDetector, $attributes]);
 
-$internal = [$docreader, $exceptions, $lib, $cli];
+$internal = [$attributes, $docreader, $exceptions, $lib, $cli];
 
 return Modules::builder(__DIR__ . '/src')
     ->register($dependencies)

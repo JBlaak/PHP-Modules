@@ -2,9 +2,9 @@
 
 namespace Sample\ModuleA;
 
-/**
- * @public
- */
+use PhpModules\Attributes\Exposed;
+
+#[Exposed]
 enum EnumA
 {
     case VALUE1;

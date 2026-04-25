@@ -2,9 +2,9 @@
 
 namespace PhpModules\Cli;
 
-/**
- * @public
- */
+use PhpModules\Attributes\Exposed;
+
+#[Exposed]
 class Cli
 {
 

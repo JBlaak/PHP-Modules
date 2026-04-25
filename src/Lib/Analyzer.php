@@ -2,6 +2,7 @@
 
 namespace PhpModules\Lib;
 
+use PhpModules\Attributes\Exposed;
 use PhpModules\DocReader\DocReader;
 use PhpModules\Exceptions\PHPModulesException;
 use PhpModules\Lib\Domain\ClassName;
@@ -18,9 +19,7 @@ use PhpModules\Lib\Internal\ModulesProcessor;
 use PhpModules\Lib\Internal\SingleDependency;
 use ReflectionClass;
 
-/**
- * @public
- */
+#[Exposed]
 class Analyzer
 {
     /**
@@ -93,6 +92,16 @@ class Analyzer
             return [];
         }
 
+        // The Exposed attribute is a framework marker; importing it is always allowed,
+        // but if its module is registered we still mark the dependency as used.
+        if ((string)$import === Exposed::class) {
+            $moduleOfImport = $this->getModule($import);
+            if ($moduleOfImport !== null && $moduleOfImport !== $moduleOfFile) {
+                $this->markUsed($moduleOfFile, $moduleOfImport, $allDependencies);
+            }
+            return [];
+        }
+
         // See if import is part of a module
         // if allowed to import undefined modules no errors
         $moduleOfImport = $this->getModule($import);
@@ -151,7 +160,7 @@ class Analyzer
         foreach ($this->fileDefinitions as $definition) {
             foreach ($definition->classDefinitions as $classDefinition) {
                 if ($classDefinition->className->isEqual($import)) {
-                    return $this->docReader->isPublic($classDefinition->phpdoc);
+                    return $classDefinition->isExposed;
                 }
             }
         }

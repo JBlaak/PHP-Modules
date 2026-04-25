@@ -2,11 +2,10 @@
 
 namespace Sample\SectionA\SectionAModuleA;
 
+use PhpModules\Attributes\Exposed;
 use Sample\SectionA\SectionAModuleB\ABClass;
 
-/**
- * @public
- */
+#[Exposed]
 class AAClass
 {
 

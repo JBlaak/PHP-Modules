@@ -2,11 +2,10 @@
 
 namespace PhpModules\Lib;
 
+use PhpModules\Attributes\Exposed;
 use PhpModules\Lib\Errors\Error;
 
-/**
- * @public
- */
+#[Exposed]
 class AnalysisResult
 {
     /**

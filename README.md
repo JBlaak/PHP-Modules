@@ -59,11 +59,11 @@ $http = PhpModules\Lib\Module::strict('App\Http', [$persistence]);
 return Modules::builder('./src')->register([$persistence, $http])
 ```
 
-Mark classes as public using PHPDoc:
+Mark classes as public using the `#[Exposed]` attribute:
 ```php
-/**
- * @public
- */
+use PhpModules\Attributes\Exposed;
+
+#[Exposed]
 class PersistedUser {}
 ```
 

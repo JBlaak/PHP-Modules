@@ -3,6 +3,7 @@
 namespace PhpModules\DocReader;
 
 
+use PhpModules\Attributes\Exposed;
 use PHPStan\PhpDocParser\Lexer\Lexer;
 use PHPStan\PhpDocParser\Parser\ConstExprParser;
 use PHPStan\PhpDocParser\Parser\ParserException;
@@ -10,28 +11,9 @@ use PHPStan\PhpDocParser\Parser\PhpDocParser;
 use PHPStan\PhpDocParser\Parser\TokenIterator;
 use PHPStan\PhpDocParser\Parser\TypeParser;
 
-/**
- * @public
- */
+#[Exposed]
 class DocReader
 {
-
-    public function isPublic(?string $phpdoc): bool
-    {
-        if ($phpdoc === null) {
-            return false;
-        }
-        $phpdoc = $this->prepare($phpdoc);
-        $lexer = new Lexer();
-        $constExprParser = new ConstExprParser();
-        $phpDocParser = new PhpDocParser(new TypeParser($constExprParser), $constExprParser);
-        $tokenize = $lexer->tokenize($phpdoc);
-
-        $phpDocNode = $phpDocParser->parse(new TokenIterator($tokenize));
-
-        return count($phpDocNode->getTagsByName('@public')) > 0;
-    }
-
     public function isIgnoredImport(?string $phpdoc): bool
     {
         if ($phpdoc === null) {

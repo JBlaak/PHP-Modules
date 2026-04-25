@@ -2,9 +2,9 @@
 
 namespace Sample\SectionB\SectionBModuleA;
 
-/**
- * @public
- */
+use PhpModules\Attributes\Exposed;
+
+#[Exposed]
 class BAClass
 {
 

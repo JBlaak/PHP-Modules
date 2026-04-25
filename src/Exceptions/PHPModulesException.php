@@ -2,9 +2,9 @@
 
 namespace PhpModules\Exceptions;
 
-/**
- * @public
- */
+use PhpModules\Attributes\Exposed;
+
+#[Exposed]
 class PHPModulesException extends \Exception
 {
 

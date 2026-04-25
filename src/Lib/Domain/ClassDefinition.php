@@ -9,7 +9,7 @@ class ClassDefinition
 {
     public bool $isEnum;
 
-    public function __construct(public ClassName $className, public ?string $phpdoc, bool $isEnum = false)
+    public function __construct(public ClassName $className, public bool $isExposed, bool $isEnum = false)
     {
         $this->isEnum = $isEnum;
     }

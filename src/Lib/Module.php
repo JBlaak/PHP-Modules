@@ -2,11 +2,10 @@
 
 namespace PhpModules\Lib;
 
+use PhpModules\Attributes\Exposed;
 use PhpModules\Lib\Domain\NamespaceName;
 
-/**
- * @public
- */
+#[Exposed]
 class Module
 {
 
