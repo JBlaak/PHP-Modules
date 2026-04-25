@@ -23,6 +23,15 @@ use ReflectionClass;
 class Analyzer
 {
     /**
+     * Imports that are always allowed regardless of module configuration.
+     * Matched as namespace parents, so any class under these namespaces is ignored.
+     */
+    private const GLOBAL_IGNORED_NAMESPACES = [
+        'PhpModules\\Attributes',
+        'Closure',
+    ];
+
+    /**
      * @param Modules $modules
      * @param FileDefinition[] $fileDefinitions
      * @param DocReader $docReader
@@ -85,20 +94,15 @@ class Analyzer
             return [];
         }
 
+        // Globally ignored imports (framework attributes, built-in classes) are always allowed
+        if ($this->isGloballyIgnored($import)) {
+            return [];
+        }
+
         // Check if file is part of some module, if not, no errors
         $moduleOfFile = $this->findModule($fileDefinition);
 
         if ($moduleOfFile === null) {
-            return [];
-        }
-
-        // The Exposed attribute is a framework marker; importing it is always allowed,
-        // but if its module is registered we still mark the dependency as used.
-        if ((string)$import === Exposed::class) {
-            $moduleOfImport = $this->getModule($import);
-            if ($moduleOfImport !== null && $moduleOfImport !== $moduleOfFile) {
-                $this->markUsed($moduleOfFile, $moduleOfImport, $allDependencies);
-            }
             return [];
         }
 
@@ -252,6 +256,16 @@ class Analyzer
         );
 
         return in_array((string)$import, $internalDefinedClasses);
+    }
+
+    private function isGloballyIgnored(Importable $import): bool
+    {
+        foreach (self::GLOBAL_IGNORED_NAMESPACES as $ignoredNamespace) {
+            if (NamespaceName::fromString($ignoredNamespace)->isParentOf($import)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
