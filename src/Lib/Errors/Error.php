@@ -2,9 +2,9 @@
 
 namespace PhpModules\Lib\Errors;
 
-/**
- * @public
- */
+use PhpModules\Attributes\Exposed;
+
+#[Exposed]
 abstract class Error
 {
 

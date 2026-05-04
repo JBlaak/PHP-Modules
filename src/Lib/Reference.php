@@ -2,15 +2,15 @@
 
 namespace PhpModules\Lib;
 
+use PhpModules\Attributes\Exposed;
 use PhpModules\Lib\Domain\NamespaceName;
 
 /**
- * @public
- *
  * A reference refers to a module that you depend on but don't have access to the full module definition.
  *
  * This is useful when you want to depend on a module that is defined in a different submodule.
  */
+#[Exposed]
 class Reference
 {
 

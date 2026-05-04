@@ -2,11 +2,10 @@
 
 namespace PhpModules\Lib;
 
+use PhpModules\Attributes\Exposed;
 use PhpModules\Exceptions\PHPModulesException;
 
-/**
- * @public
- */
+#[Exposed]
 class Modules
 {
     /**

@@ -43,7 +43,7 @@ class AnalyzerTestCase extends TestCase
                 $classDefinitions[] = $class;
             }
             if (is_string($class)) {
-                $classDefinitions[] = new ClassDefinition(ClassName::fromString($class), null);
+                $classDefinitions[] = new ClassDefinition(ClassName::fromString($class), false);
             }
         }
 

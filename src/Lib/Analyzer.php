@@ -2,6 +2,7 @@
 
 namespace PhpModules\Lib;
 
+use PhpModules\Attributes\Exposed;
 use PhpModules\DocReader\DocReader;
 use PhpModules\Exceptions\PHPModulesException;
 use PhpModules\Lib\Domain\ClassName;
@@ -18,11 +19,18 @@ use PhpModules\Lib\Internal\ModulesProcessor;
 use PhpModules\Lib\Internal\SingleDependency;
 use ReflectionClass;
 
-/**
- * @public
- */
+#[Exposed]
 class Analyzer
 {
+    /**
+     * Imports that are always allowed regardless of module configuration.
+     * Matched as namespace parents, so any class under these namespaces is ignored.
+     */
+    private const GLOBAL_IGNORED_NAMESPACES = [
+        'PhpModules\\Attributes',
+        'Closure',
+    ];
+
     /**
      * @param Modules $modules
      * @param FileDefinition[] $fileDefinitions
@@ -83,6 +91,11 @@ class Analyzer
 
         // Make sure the import isn't ignored
         if ($this->docReader->isIgnoredImport($import->phpdoc)) {
+            return [];
+        }
+
+        // Globally ignored imports (framework attributes, built-in classes) are always allowed
+        if ($this->isGloballyIgnored($import)) {
             return [];
         }
 
@@ -151,7 +164,7 @@ class Analyzer
         foreach ($this->fileDefinitions as $definition) {
             foreach ($definition->classDefinitions as $classDefinition) {
                 if ($classDefinition->className->isEqual($import)) {
-                    return $this->docReader->isPublic($classDefinition->phpdoc);
+                    return $classDefinition->isExposed;
                 }
             }
         }
@@ -243,6 +256,16 @@ class Analyzer
         );
 
         return in_array((string)$import, $internalDefinedClasses);
+    }
+
+    private function isGloballyIgnored(Importable $import): bool
+    {
+        foreach (self::GLOBAL_IGNORED_NAMESPACES as $ignoredNamespace) {
+            if (NamespaceName::fromString($ignoredNamespace)->isParentOf($import)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**

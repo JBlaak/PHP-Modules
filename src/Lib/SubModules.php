@@ -2,9 +2,9 @@
 
 namespace PhpModules\Lib;
 
-/**
- * @public
- */
+use PhpModules\Attributes\Exposed;
+
+#[Exposed]
 class SubModules
 {
 
