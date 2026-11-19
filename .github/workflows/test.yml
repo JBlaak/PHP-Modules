@@ -38,3 +38,32 @@ jobs:
 
       - name: Run own modules check
         run: ./modules test
+
+  dependency-ranges:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        include:
+          - php-versions: '8.1'
+            dependency-stability: prefer-lowest
+          - php-versions: '8.4'
+            dependency-stability: prefer-stable
+
+    name: Tests (${{ matrix.dependency-stability }}, PHP ${{ matrix.php-versions }})
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install PHP versions
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php-versions }}
+          tools: composer:v2
+      - name: Update dependencies to the edge of the supported ranges
+        run: composer update --${{ matrix.dependency-stability }} --no-interaction --quiet
+
+      - name: Execute tests via PHPUnit
+        run: ./vendor/bin/phpunit --stop-on-failure --stop-on-error
+
+      - name: Run own modules check
+        run: ./modules test
