@@ -26,7 +26,11 @@ class DefinitionsGatherer
      */
     public function gather(): array
     {
-        $parser = (new ParserFactory)->create(ParserFactory::PREFER_PHP7);
+        $parserFactory = new ParserFactory;
+        // php-parser 5 replaced create() with createForNewestSupportedVersion(), php-parser 4 only has create()
+        $parser = method_exists($parserFactory, 'createForNewestSupportedVersion')
+            ? $parserFactory->createForNewestSupportedVersion()
+            : $parserFactory->create(ParserFactory::PREFER_PHP7);
         $traverser = new NodeTraverser;
         $traverser->addVisitor(new NameResolver());
 
@@ -54,9 +58,9 @@ class DefinitionsGatherer
             }
             $traverser->traverse($stmts);
 
-            $nameSpaceParts = $definitionCollector->namespace?->name?->parts;
-            if ($nameSpaceParts !== null) {
-                $namespace = NamespaceName::fromArray($nameSpaceParts);
+            $namespaceName = $definitionCollector->namespace?->name;
+            if ($namespaceName !== null) {
+                $namespace = NamespaceName::fromArray(explode('\\', $namespaceName->toString()));
 
                 /** @var Importable[] $imports */
                 $imports = [];
@@ -72,7 +76,7 @@ class DefinitionsGatherer
                     }
                     foreach ($import->uses as $use) {
                         $imports[] = Importable::fromArray(
-                            $use->name->parts,
+                            explode('\\', $use->name->toString()),
                             $use->getStartLine(),
                             $comment
                         );
